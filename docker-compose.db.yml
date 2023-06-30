@@ -1,0 +1,38 @@
+version: '3.5'
+
+services:
+  photo-storage-postgres:
+    image: postgis/postgis
+    ports:
+      - '${POSTGRES_EXTERNAL_PORT:-5432}:5432'
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: photo-storage
+    volumes:
+      - photo-storage-api-db:/var/lib/postgresql/photo-storage
+
+  photo-storage-redis:
+    image: redis
+    ports:
+      - '6379:6379'
+    command: >
+      --user user on allcommands allkeys >pass
+    restart: unless-stopped
+
+  photo-storage-s3:
+    image: quay.io/minio/minio:latest
+    command: server /data --console-address ":9001"
+    restart: unless-stopped
+    ports:
+      - "7000:9000"
+      - "7001:9001"
+    volumes:
+      - /photo-storage-api-s3-data:/usr/src/app/s3
+    environment:
+      - MINIO_ROOT_USER=user
+      - MINIO_ROOT_PASSWORD=password
+
+volumes:
+  photo-storage-api-db:
+  photo-storage-api-s3:
