@@ -4,7 +4,7 @@ import { IsAlphanumeric, IsEmail, IsNotEmpty, Length } from 'class-validator';
 import { lowerCaseTransformer } from '../../../../../common/helpers';
 
 export class BaseUserRequestDto {
-  @Transform(() => lowerCaseTransformer)
+  @Transform(({ value }) => lowerCaseTransformer.to(value))
   @IsNotEmpty()
   @IsEmail()
   email: string;

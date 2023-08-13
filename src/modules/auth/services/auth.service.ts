@@ -17,7 +17,7 @@ export class AuthService {
   public async login(userId: string): Promise<LoginResponseDto> {
     const user = await this.userRepository.findOneByOrFail({ id: userId });
 
-    const token = await this.tokenService.generateAuthToken({
+    const token = this.tokenService.generateAuthToken({
       id: user.id,
       email: user.email,
     });
@@ -25,7 +25,16 @@ export class AuthService {
     return { token, user: UserMapper.toResponseDto(user) };
   }
 
-  public async signUp(dto: UserCreateRequestDto): Promise<UserEntity> {
-    return await this.userRepository.save(this.userRepository.create(dto));
+  public async signUp(dto: UserCreateRequestDto): Promise<LoginResponseDto> {
+    const user = await this.userRepository.save(
+      this.userRepository.create(dto),
+    );
+
+    const token = this.tokenService.generateAuthToken({
+      id: user.id,
+      email: user.email,
+    });
+
+    return { token, user: UserMapper.toResponseDto(user) };
   }
 }

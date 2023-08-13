@@ -24,7 +24,7 @@
     "migration:revert": "npm run typeorm -- migration:revert",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "prepare": "husky install",
-    "test:e2e": "NODE_ENV=test chmod +x test/test.sh && test/test.sh"
+    "test:e2e": "chmod +x test/test.sh && test/test.sh"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.388.0",

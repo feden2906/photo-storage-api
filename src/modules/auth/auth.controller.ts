@@ -34,6 +34,7 @@ export class AuthController {
   @Post('sign-in')
   async signIn(
     @CurrentUser() user: IUserData,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Body() dto: UserLoginRequestDto,
   ): Promise<LoginResponseDto> {
     return await this.authService.login(user.userId);
@@ -42,9 +43,8 @@ export class AuthController {
   @SkipAuth()
   @ApiOperation({ description: 'User registration' })
   @Post('sign-up')
-  async signUp(@Body() dto: UserCreateRequestDto): Promise<UserResponseDto> {
-    const result = await this.authService.signUp(dto);
-    return UserMapper.toResponseDto(result);
+  async signUp(@Body() dto: UserCreateRequestDto): Promise<LoginResponseDto> {
+    return await this.authService.signUp(dto);
   }
 
   @SkipAuth()
