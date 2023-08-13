@@ -4,6 +4,7 @@
          "ESNext"
       ],
       "target": "ESNext",
+      "allowJs": true,
       "module": "commonjs",
       "moduleResolution": "node",
       "outDir": "./dist/src",

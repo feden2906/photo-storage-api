@@ -1,0 +1,16 @@
+version: "3.2"
+
+services:
+  photo-storage-postgres-test:
+    image: postgis/postgis
+    ports:
+      - '${POSTGRES_EXTERNAL_PORT:-5433}:5432'
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: photo-storage
+    volumes:
+      - photo-storage-api-db-test:/var/lib/postgresql/photo-storage
+
+volumes:
+  photo-storage-api-db-test:

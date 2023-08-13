@@ -14,8 +14,8 @@ dotenv.config({ path: `environments/${environment}.env` });
 
 function initSwagger(app: INestApplication): void {
   const documentBuilder: DocumentBuilder = new DocumentBuilder()
-    .setTitle('Lanars API')
-    .setDescription('Lanars API Documentation')
+    .setTitle('Photo storage API')
+    .setDescription('Photo storage API Documentation')
     .addBearerAuth({
       type: 'http',
       scheme: 'bearer',

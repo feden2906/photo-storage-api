@@ -6,7 +6,7 @@ import { SkipAuth } from '../../common/decorators';
 @Controller('health')
 export class HealthController {
   @Get()
-  checkHealthHeartbeat(): void {
-    return;
+  checkHealthHeartbeat(): string {
+    return 'Healthy';
   }
 }
