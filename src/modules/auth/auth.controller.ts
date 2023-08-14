@@ -11,8 +11,6 @@ import {
   UserCreateRequestDto,
   UserLoginRequestDto,
 } from '../user/models/dtos/request';
-import { UserResponseDto } from '../user/models/dtos/response';
-import { UserMapper } from '../user/services/user.mapper';
 import { LocalAuthGuard } from './guards';
 import { RefreshTokenRequestDto } from './models/dtos/request';
 import { LoginResponseDto, TokenResponseDto } from './models/dtos/response';

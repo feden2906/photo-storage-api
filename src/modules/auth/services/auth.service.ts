@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { UserEntity } from '../../../database';
 import { UserCreateRequestDto } from '../../user/models/dtos/request';
 import { UserMapper } from '../../user/services/user.mapper';
 import { UserRepository } from '../../user/services/user.repository';

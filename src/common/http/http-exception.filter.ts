@@ -27,7 +27,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     let status;
     if (exception instanceof HttpException) {
       status = (exception as HttpException).getStatus();
-      message = (exception as any).message;
+      message = (exception as any).response.message;
     } else if (exception instanceof QueryFailedError) {
       status = HttpStatus.UNPROCESSABLE_ENTITY;
       message = (exception as QueryFailedError).message;
