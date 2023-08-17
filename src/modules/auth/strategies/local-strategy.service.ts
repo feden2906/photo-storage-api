@@ -4,8 +4,9 @@ import { ExtractJwt } from 'passport-jwt';
 import { Strategy } from 'passport-local';
 
 import { InvalidCredentialsException } from '../../../common/http';
+import { IUserData } from '../../../common/models';
 import { AuthConfigService } from '../../../config/auth/configuration.service';
-import { UserEntity } from '../../../database';
+import { UserMapper } from '../../user/services/user.mapper';
 import { UserRepository } from '../../user/services/user.repository';
 
 @Injectable()
@@ -23,11 +24,11 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(email: string, password: string): Promise<UserEntity> {
+  async validate(email: string, password: string): Promise<IUserData> {
     const user = await this.userRepository.authorize(email, password);
     if (!user) {
       throw new InvalidCredentialsException();
     }
-    return user;
+    return UserMapper.toUserData(user);
   }
 }

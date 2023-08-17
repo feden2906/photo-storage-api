@@ -24,7 +24,7 @@
     "migration:revert": "npm run typeorm -- migration:revert",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "prepare": "husky install",
-    "test": "npm run test:e2e",
+    "test": "cross-env NODE_ENV=test npm run test:e2e",
     "test:e2e": "chmod +x test/test.sh && test/test.sh"
   },
   "dependencies": {
@@ -42,6 +42,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "compression": "^1.7.4",
+    "cross-env": "^7.0.3",
     "cross-var": "^1.1.0",
     "ejs": "^3.1.9",
     "ms": "^2.1.3",

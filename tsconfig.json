@@ -7,7 +7,7 @@
       "allowJs": true,
       "module": "commonjs",
       "moduleResolution": "node",
-      "outDir": "./dist/src",
+      "outDir": "./dist",
       "emitDecoratorMetadata": true,
       "experimentalDecorators": true,
       "sourceMap": true,

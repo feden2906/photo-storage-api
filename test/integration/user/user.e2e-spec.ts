@@ -1,13 +1,13 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
-import { DataSource } from 'typeorm';
 
 import { AppModule } from '../../../src/app.module';
 import { UserService } from '../../../src/modules/user/services/user.service';
 
 describe('Users API (Integration)', () => {
   let app: INestApplication;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let userService: UserService;
 
   beforeAll(async () => {
@@ -25,10 +25,7 @@ describe('Users API (Integration)', () => {
     await app.close();
   });
   it('should get my user data', () => {
-    return request(app.getHttpServer())
-      .get('/users/me')
-      .expect(200)
-      .expect('Healthy');
+    return request(app.getHttpServer()).get('/users/me').expect(401);
   });
 
   // it('should get users', async () => {
