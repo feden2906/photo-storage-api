@@ -26,7 +26,6 @@ export class AuthController {
     private tokenService: TokenService,
   ) {}
 
-  @SkipAuth()
   @UseGuards(LocalAuthGuard)
   @ApiOperation({ description: 'User authentication' })
   @Post('sign-in')
@@ -38,14 +37,12 @@ export class AuthController {
     return await this.authService.login(user.userId);
   }
 
-  @SkipAuth()
   @ApiOperation({ description: 'User registration' })
   @Post('sign-up')
   async signUp(@Body() dto: UserCreateRequestDto): Promise<LoginResponseDto> {
     return await this.authService.signUp(dto);
   }
 
-  @SkipAuth()
   @ApiOperation({ description: 'Renew access in the application' })
   @ApiUnauthorizedResponse({ description: 'Refresh token invalid or expired' })
   @Post('refresh')
