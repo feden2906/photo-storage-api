@@ -5,8 +5,12 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Post,
   Query,
+  UploadedFiles,
+  UseInterceptors,
 } from '@nestjs/common';
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CurrentUser, SkipAuth } from '../../common/decorators';
@@ -30,6 +34,17 @@ export class ImageController {
   ): Promise<ImageListResponseDto> {
     const result = await this.imageService.getImageList(query);
     return ImageMapper.toResponseListDto(result, query);
+  }
+
+  @ApiOperation({ description: 'Upload images and videos' })
+  @UseInterceptors(AnyFilesInterceptor())
+  @HttpCode(HttpStatus.CREATED)
+  @Post('upload')
+  public async uploadFiles(
+    @UploadedFiles() files: Array<Express.Multer.File>,
+    @CurrentUser() user: IUserData,
+  ): Promise<any> {
+    await this.imageService.uploadFiles(files, user.userId);
   }
 
   @ApiBearerAuth()

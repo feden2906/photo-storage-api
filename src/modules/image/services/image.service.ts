@@ -23,6 +23,16 @@ export class ImageService {
     return await this.imageRepository.getImageList(query);
   }
 
+  public async uploadFiles(
+    files: Array<Express.Multer.File>,
+    userId: string,
+  ): Promise<void> {
+    files.forEach((file) => {
+      file.stream;
+      this.storageService.upload(file, userId);
+    });
+  }
+
   public async deleteImage(userId: string, imageId: string): Promise<void> {
     const image = await this.checkAbilityToManage(userId, imageId);
     await Promise.all([
