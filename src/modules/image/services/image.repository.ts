@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { plainToInstance } from 'class-transformer';
 import { DataSource, FindOptionsWhere, Repository } from 'typeorm';
 
 import { ListEntityType } from '../../../common/types';
@@ -45,13 +44,11 @@ export class ImageRepository extends Repository<ImageEntity> {
     dto: BaseImageRequestDto,
     url: string,
   ): Promise<ImageEntity> {
-    return await this.save(
-      plainToInstance(ImageEntity, {
-        ...dto,
-        url,
-        portfolio: { id: portfolioId },
-      }),
-    );
+    return await this.save({
+      ...dto,
+      url,
+      portfolio: { id: portfolioId },
+    });
   }
 
   public async isExist(imageId: string): Promise<boolean> {

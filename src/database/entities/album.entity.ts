@@ -12,8 +12,8 @@ export class AlbumEntity extends CreatedUpdatedDateModel {
   @ManyToMany(() => ImageEntity, (entity) => entity.albums, { nullable: true })
   images?: ImageEntity[];
 
-  @ManyToOne(() => ImageEntity, (entity) => entity.id, {
-    onDelete: 'CASCADE',
+  @ManyToOne(() => ImageEntity, (entity) => entity.albums_title, {
+    onDelete: 'SET NULL',
     nullable: true,
   })
   title_image?: ImageEntity;
