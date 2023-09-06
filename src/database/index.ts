@@ -1,1 +1,1 @@
-export * from './enitites';
+export * from './entities';

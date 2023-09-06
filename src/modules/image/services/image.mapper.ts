@@ -5,18 +5,17 @@ import { ImageListQueryDto } from '../models/dtos/request';
 import {
   ImageListItemResponseDto,
   ImageListResponseDto,
-  ImageResponseDto,
 } from '../models/dtos/response';
 
 export class ImageMapper {
-  public static toResponseDto(entity: ImageEntity): ImageResponseDto {
-    return {
-      id: entity.id,
-      url: ImageMapper.buildUrl(entity.url),
-      name: entity.name,
-      description: entity.description,
-    };
-  }
+  // public static toResponseDto(entity: ImageEntity): ImageResponseDto {
+  //   return {
+  //     id: entity.id,
+  //     url: ImageMapper.buildUrl(entity.url),
+  //     name: entity.name,
+  //     description: entity.description,
+  //   };
+  // }
 
   public static toResponseListDto(
     list: ListEntityType<ImageEntity>,
@@ -35,7 +34,6 @@ export class ImageMapper {
     return {
       id: entity.id,
       url: ImageMapper.buildUrl(entity.url),
-      description: entity.description,
     };
   }
 
