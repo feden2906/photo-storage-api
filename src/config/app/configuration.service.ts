@@ -10,6 +10,10 @@ export class AppConfigService {
     private appConfiguration: ConfigType<typeof configuration>,
   ) {}
 
+  get environment(): string {
+    return this.appConfiguration.environment;
+  }
+
   get port(): number {
     return Number(this.appConfiguration.port);
   }

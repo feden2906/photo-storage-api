@@ -1,33 +1,36 @@
 {
   "name": "photo-storage-api",
   "version": "0.0.1",
-  "description": "",
-  "author": "feden2906",
   "private": false,
+  "description": "",
   "license": "UNLICENSED",
+  "author": "feden2906",
   "scripts": {
     "prebuild": "rimraf dist",
-    "prestart:prod": "npm run migration:run",
     "build": "nest build",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start:db": "sudo docker compose -f docker-compose.db.yml up",
     "create-local-s3": "ts-node src/scripts/create-local-bucket.script.ts",
-    "start": "nest start",
-    "start:watch": "nest start --watch",
-    "start:debug": "nest start --debug --watch",
-    "start:test": "NODE_ENV=test nest start --watch",
-    "start:dev": "NODE_ENV=development nest start --watch",
-    "start:prod": "NODE_ENV=production node dist/src/main",
-    "typeorm": "typeorm-ts-node-commonjs --dataSource ./ormconfig.js",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "migration:create": "cross-var npm run typeorm -- migration:create ./src/database/migrations/$npm_config_name",
     "migration:generate": "cross-var npm run typeorm -- migration:generate ./src/database/migrations/$npm_config_name",
-    "migration:run": "npm run typeorm -- migration:run",
     "migration:revert": "npm run typeorm -- migration:revert",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "seed:run": "ts-node ./src/database/seeds/run-seed.ts",
+    "migration:run": "npm run typeorm -- migration:run",
     "prepare": "husky install",
+    "seed:run": "ts-node ./src/database/seeds/run-seed.ts",
+    "start": "nest start",
+    "start:db": "sudo docker compose -f docker-compose.db.yml up",
+    "start:debug": "nest start --debug --watch",
+    "start:dev": "NODE_ENV=development nest start --watch",
+    "prestart:prod": "npm run migration:run",
+    "start:prod": "NODE_ENV=production node dist/src/main",
+    "start:test": "NODE_ENV=test nest start --watch",
+    "start:watch": "nest start --watch",
     "test": "cross-env NODE_ENV=test npm run test:e2e",
-    "test:e2e": "chmod +x test/test.sh && test/test.sh"
+    "test:e2e": "chmod +x test/test.sh && test/test.sh",
+    "typeorm": "typeorm-ts-node-commonjs --dataSource ./ormconfig.js"
+  },
+  "lint-staged": {
+    "{src,apps,libs,test}/**/*.ts": "eslint --fix"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.405.0",
@@ -85,8 +88,5 @@
     "ts-loader": "^9.4.4",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.1.6"
-  },
-  "lint-staged": {
-    "{src,apps,libs,test}/**/*.ts": "eslint --fix"
   }
 }
