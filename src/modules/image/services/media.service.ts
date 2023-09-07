@@ -1,3 +1,5 @@
+import { PassThrough } from 'node:stream';
+
 import { Injectable } from '@nestjs/common';
 
 import {
@@ -7,29 +9,31 @@ import {
 import { ListEntityType } from '../../../common/types';
 import { ImageEntity } from '../../../database';
 import { StorageService } from '../../storage/services/storage.service';
-import { ImageListQueryDto } from '../models/dtos/request';
-import { ImageRepository } from './image.repository';
+import { MediaListQueryDto } from '../models/dtos/request';
+import { MediaRepository } from './media.repository';
 
 @Injectable()
-export class ImageService {
+export class MediaService {
   constructor(
     private storageService: StorageService,
-    private imageRepository: ImageRepository,
+    private imageRepository: MediaRepository,
   ) {}
 
   public async getImageList(
-    query: ImageListQueryDto,
+    query: MediaListQueryDto,
   ): Promise<ListEntityType<ImageEntity>> {
     return await this.imageRepository.getImageList(query);
   }
 
-  public async uploadFiles(
-    files: Array<Express.Multer.File>,
+  public async uploadMediaFiles(
+    mediaFiles: Array<Express.Multer.File>,
     userId: string,
   ): Promise<void> {
-    files.forEach((file) => {
-      file.stream;
-      this.storageService.upload(file, userId);
+    mediaFiles.map(async (mediaFile) => {
+      const fileStream = new PassThrough();
+      fileStream.end(mediaFile.buffer);
+
+      await this.storageService.upload(fileStream, mediaFile, userId);
     });
   }
 

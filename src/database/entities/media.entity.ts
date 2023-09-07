@@ -12,8 +12,8 @@ import { CreatedUpdatedDateModel } from './_created-updated-date.model';
 import { AlbumEntity } from './album.entity';
 import { UserEntity } from './user.entity';
 
-@Entity('image')
-export class ImageEntity extends CreatedUpdatedDateModel {
+@Entity('media')
+export class MediaEntity extends CreatedUpdatedDateModel {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

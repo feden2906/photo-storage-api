@@ -7,44 +7,47 @@ import {
   Param,
   Post,
   Query,
+  Request,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CurrentUser, SkipAuth } from '../../common/decorators';
 import { IUserData } from '../../common/models';
-import { ParseImage } from '../../common/pipes';
+import { ParseMediaFiles } from '../../common/pipes';
 import { ImageId } from './models/constants';
-import { ImageListQueryDto } from './models/dtos/request';
-import { ImageListResponseDto } from './models/dtos/response';
-import { ImageMapper } from './services/image.mapper';
-import { ImageService } from './services/image.service';
+import { MediaListQueryDto } from './models/dtos/request';
+import { MediaListResponseDto } from './models/dtos/response';
+import { MediaMapper } from './services/media.mapper';
+import { MediaService } from './services/media.service';
 
 @ApiTags('Image')
 @Controller({ path: 'images', version: '1' })
-export class ImageController {
-  constructor(private imageService: ImageService) {}
+export class MediaController {
+  constructor(private imageService: MediaService) {}
 
   @SkipAuth()
   @ApiOperation({ description: 'Get list of my images' })
   @Get()
   public async getImageList(
-    @Query() query: ImageListQueryDto,
-  ): Promise<ImageListResponseDto> {
+    @Query() query: MediaListQueryDto,
+  ): Promise<MediaListResponseDto> {
     const result = await this.imageService.getImageList(query);
-    return ImageMapper.toResponseListDto(result, query);
+    return MediaMapper.toResponseListDto(result, query);
   }
 
   @ApiOperation({ description: 'Upload images and videos' })
-  @UseInterceptors(ParseImage)
+  @UseInterceptors(FilesInterceptor('files'))
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post('upload')
-  public async uploadFiles(
-    @UploadedFiles() files: Array<Express.Multer.File>,
+  public async uploadMedia(
+    @Request() req,
+    @UploadedFiles(ParseMediaFiles) files: Array<Express.Multer.File>,
     @CurrentUser() user: IUserData,
   ): Promise<void> {
-    await this.imageService.uploadFiles(files, user.userId);
+    await this.imageService.uploadMediaFiles(files, user.userId);
   }
 
   @ApiBearerAuth()

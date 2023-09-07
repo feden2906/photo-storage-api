@@ -3,23 +3,23 @@ import { DataSource, FindOptionsWhere, Repository } from 'typeorm';
 
 import { ListEntityType } from '../../../common/types';
 import { ImageEntity } from '../../../database';
-import { BaseImageRequestDto, ImageListQueryDto } from '../models/dtos/request';
-import { ImageSortFieldEnum } from '../models/enums';
+import { BaseMediaRequestDto, MediaListQueryDto } from '../models/dtos/request';
+import { MediaSortFieldEnum } from '../models/enums';
 
 @Injectable()
-export class ImageRepository extends Repository<ImageEntity> {
+export class MediaRepository extends Repository<ImageEntity> {
   constructor(private readonly dataSource: DataSource) {
     super(ImageEntity, dataSource.manager);
   }
 
   public async getImageList(
-    query: ImageListQueryDto,
+    query: MediaListQueryDto,
   ): Promise<ListEntityType<ImageEntity>> {
     const queryBuilder = this.createQueryBuilder('image');
     queryBuilder.leftJoin('image.portfolio', 'portfolio');
 
     switch (query.orderBy) {
-      case ImageSortFieldEnum.created:
+      case MediaSortFieldEnum.created:
         queryBuilder.orderBy('image.created', query.order);
         break;
     }
@@ -41,7 +41,7 @@ export class ImageRepository extends Repository<ImageEntity> {
   public async createImage(
     userId: string,
     portfolioId: string,
-    dto: BaseImageRequestDto,
+    dto: BaseMediaRequestDto,
     url: string,
   ): Promise<ImageEntity> {
     return await this.save({

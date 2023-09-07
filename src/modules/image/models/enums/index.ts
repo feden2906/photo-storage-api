@@ -1,1 +1,1 @@
-export * from './image-sort-field.enum';
+export * from './media-sort-field.enum';

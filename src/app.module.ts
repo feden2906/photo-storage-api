@@ -5,7 +5,7 @@ import { AppConfigModule } from './config/app/config.module';
 import { TypeOrmConfigurations } from './config/database/type-orm-configuration';
 import { AuthModule } from './modules/auth/auth.module';
 import { HealthModule } from './modules/health/health.module';
-import { ImageModule } from './modules/image/image.module';
+import { MediaModule } from './modules/image/media.module';
 import { UserModule } from './modules/user/user.module';
 
 @Module({
@@ -13,7 +13,7 @@ import { UserModule } from './modules/user/user.module';
     AppConfigModule,
     TypeOrmModule.forRootAsync(TypeOrmConfigurations.config),
     AuthModule,
-    ImageModule,
+    MediaModule,
     UserModule,
     HealthModule,
   ],

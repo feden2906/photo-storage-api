@@ -1,17 +1,17 @@
 import { ListEntityType } from '../../../common/types';
 import { AWSConfigServiceStatic } from '../../../config/aws/configuration.service-static';
 import { ImageEntity } from '../../../database';
-import { ImageListQueryDto } from '../models/dtos/request';
+import { MediaListQueryDto } from '../models/dtos/request';
 import {
-  ImageListItemResponseDto,
-  ImageListResponseDto,
+  MediaListItemResponseDto,
+  MediaListResponseDto,
 } from '../models/dtos/response';
 
-export class ImageMapper {
-  // public static toResponseDto(entity: ImageEntity): ImageResponseDto {
+export class MediaMapper {
+  // public static toResponseDto(entity: ImageEntity): MediaResponseDto {
   //   return {
   //     id: entity.id,
-  //     url: ImageMapper.buildUrl(entity.url),
+  //     url: MediaMapper.buildUrl(entity.url),
   //     name: entity.name,
   //     description: entity.description,
   //   };
@@ -19,8 +19,8 @@ export class ImageMapper {
 
   public static toResponseListDto(
     list: ListEntityType<ImageEntity>,
-    query: ImageListQueryDto,
-  ): ImageListResponseDto {
+    query: MediaListQueryDto,
+  ): MediaListResponseDto {
     return {
       data: list.data.map(this.toResponseListItemDto),
       total: list.total,
@@ -30,10 +30,10 @@ export class ImageMapper {
 
   public static toResponseListItemDto(
     entity: ImageEntity,
-  ): ImageListItemResponseDto {
+  ): MediaListItemResponseDto {
     return {
       id: entity.id,
-      url: ImageMapper.buildUrl(entity.url),
+      url: MediaMapper.buildUrl(entity.url),
     };
   }
 

@@ -13,7 +13,7 @@ import {
 } from '../../common/helpers';
 import { CreatedUpdatedDateModel } from './_created-updated-date.model';
 import { AlbumEntity } from './album.entity';
-import { ImageEntity } from './image.entity';
+import { MediaEntity } from './media.entity';
 
 @Entity('user')
 export class UserEntity extends CreatedUpdatedDateModel {
@@ -39,8 +39,8 @@ export class UserEntity extends CreatedUpdatedDateModel {
   })
   password?: string;
 
-  @OneToMany(() => ImageEntity, (entity) => entity.user, { nullable: true })
-  images?: ImageEntity[];
+  @OneToMany(() => MediaEntity, (entity) => entity.user, { nullable: true })
+  images?: MediaEntity[];
 
   @OneToMany(() => AlbumEntity, (entity) => entity.album_owner, {
     nullable: true,

@@ -1,3 +1,3 @@
-export * from './base-image.request.dto';
-export * from './image-create.request.dto';
-export * from './image-list.query.dto';
+export * from './base-media.request.dto';
+export * from './media-create.request.dto';
+export * from './media-list.query.dto';

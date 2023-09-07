@@ -1,24 +1,19 @@
-import {
-  BadRequestException,
-  Injectable,
-  PipeTransform,
-  UnsupportedMediaTypeException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
 
-import { ImageConfig } from '../constants';
+import { FileUploadHelper } from '../helpers';
 
 @Injectable()
-export class ParseImage implements PipeTransform {
-  transform(
-    file: Express.Multer.File,
-  ): Express.Multer.File | Express.Multer.File[] {
-    if (file === undefined || file === null) {
-      throw new BadRequestException('Image is required');
+export class ParseMediaFiles implements PipeTransform {
+  transform(files: Array<Express.Multer.File>): Express.Multer.File[] {
+    if (files === undefined || files === null || files.length === 0) {
+      throw new BadRequestException('Media file is required');
     }
-    if (file.size > ImageConfig.size) {
-      throw new UnsupportedMediaTypeException(`Image is too large`);
-    }
+    // if (file.size > ImageConfig.size) {
+    //   throw new UnsupportedMediaTypeException(`Image is too large`);
+    // }
 
-    return file;
+    files.forEach((file) => FileUploadHelper.validateMimetype(file.mimetype));
+
+    return files;
   }
 }
