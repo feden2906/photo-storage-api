@@ -31,6 +31,7 @@ export class PostgresqlConfigService {
   }
 
   get runMigrations(): boolean {
-    return this.postgresqlConfiguration.runMigrations === 'true';
+    const value = this.postgresqlConfiguration.runMigrations;
+    return value ? JSON.parse(value) : false;
   }
 }

@@ -1,4 +1,4 @@
-import { ConfigurationServiceStatic } from '../configuration.service-static';
+import { ConfigurationServiceStatic } from '../../configuration.service-static';
 
 export class AWSConfigServiceStatic {
   static get accessKeyId(): string {

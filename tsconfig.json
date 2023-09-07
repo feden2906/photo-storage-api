@@ -6,10 +6,11 @@
       "target": "ESNext",
       "allowJs": true,
       "module": "commonjs",
+      "strict": false,
       "moduleResolution": "node",
       "outDir": "./dist",
       "emitDecoratorMetadata": true,
       "experimentalDecorators": true,
-      "sourceMap": true,
+      "sourceMap": true
    }
 }

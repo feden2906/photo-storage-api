@@ -2,15 +2,11 @@ import { INestApplication, Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as compression from 'compression';
-import * as dotenv from 'dotenv';
 
 import { AppModule } from './app.module';
 import { SwaggerHelper } from './common/helpers';
 import { GlobalExceptionFilter } from './common/http';
 import { AppConfigService } from './config/app/configuration.service';
-
-const environment = process.env.NODE_ENV ? process.env.NODE_ENV : '';
-dotenv.config({ path: `environments/${environment}.env` });
 
 function initSwagger(app: INestApplication): void {
   const documentBuilder: DocumentBuilder = new DocumentBuilder()
@@ -75,4 +71,4 @@ async function bootstrap() {
   });
 }
 
-bootstrap().then();
+void bootstrap();

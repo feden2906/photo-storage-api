@@ -1,13 +1,13 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+/* eslint-disable */
 const typeorm = require('typeorm');
 
 let config;
 try {
-  config = require('./src/config/database/type-orm-configuration');
+  config = require('./src/config/database/static/type-orm-configuration-static');
 } catch {
-  config = require('./dist/src/config/database/postgresql/type-orm-configuration');
+  // config = require('./dist/src/config/database/type-orm-configuration');
 }
-const defaultOptions = config.TypeOrmConfigurations.staticConfig;
+const defaultOptions = config.typeOrmStaticConfig;
 const dataSource = new typeorm.DataSource(defaultOptions);
 
 module.exports = [dataSource];
