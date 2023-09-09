@@ -1,4 +1,4 @@
-import { ConfigurationServiceStatic } from '../configuration.service-static';
+import { ConfigurationServiceStatic } from '../../configuration.service-static';
 
 export class PostgresqlConfigServiceStatic {
   static get host(): string {
@@ -22,6 +22,7 @@ export class PostgresqlConfigServiceStatic {
   }
 
   static get runMigrations(): boolean {
-    return !!ConfigurationServiceStatic.get('POSTGRES_RUN_MIGRATIONS');
+    const value = ConfigurationServiceStatic.get('POSTGRES_RUN_MIGRATIONS');
+    return value ? JSON.parse(value) : false;
   }
 }

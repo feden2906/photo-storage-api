@@ -1,9 +1,14 @@
-import { registerAs } from '@nestjs/config';
+import { ConfigService, registerAs } from '@nestjs/config';
 
+const configService = new ConfigService();
 const configToken = 'auth';
 export default registerAs(configToken, () => ({
-  accessTokenSecret: process.env.AUTH_ACCESS_TOKEN_SECRET,
-  refreshTokenSecret: process.env.AUTH_REFRESH_TOKEN_SECRET,
-  accessTokenExpiration: process.env.AUTH_ACCESS_TOKEN_EXPIRATION,
-  refreshTokenExpiration: process.env.AUTH_REFRESH_TOKEN_EXPIRATION,
+  accessTokenSecret: configService.get<string>('AUTH_ACCESS_TOKEN_SECRET'),
+  refreshTokenSecret: configService.get<string>('AUTH_REFRESH_TOKEN_SECRET'),
+  accessTokenExpiration: configService.get<string>(
+    'AUTH_ACCESS_TOKEN_EXPIRATION',
+  ),
+  refreshTokenExpiration: configService.get<string>(
+    'AUTH_REFRESH_TOKEN_EXPIRATION',
+  ),
 }));

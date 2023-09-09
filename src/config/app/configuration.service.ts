@@ -19,6 +19,6 @@ export class AppConfigService {
   }
 
   get hostname(): string {
-    return '0.0.0.0';
+    return this.appConfiguration.hostname;
   }
 }

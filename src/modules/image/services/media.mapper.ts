@@ -1,5 +1,5 @@
 import { ListEntityType } from '../../../common/types';
-import { AWSConfigServiceStatic } from '../../../config/aws/configuration.service-static';
+import { AWSConfigServiceStatic } from '../../../config/aws/static/configuration.service-static';
 import { ImageEntity } from '../../../database';
 import { MediaListQueryDto } from '../models/dtos/request';
 import {

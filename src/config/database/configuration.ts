@@ -1,11 +1,13 @@
-import { registerAs } from '@nestjs/config';
+import { ConfigService, registerAs } from '@nestjs/config';
 
+const configService = new ConfigService();
 const configToken = 'postgresql';
+
 export default registerAs(configToken, () => ({
-  host: process.env.POSTGRES_HOST,
-  port: process.env.POSTGRES_PORT,
-  user: process.env.POSTGRES_USER,
-  password: process.env.POSTGRES_PASSWORD,
-  database: process.env.POSTGRES_DATABASE,
-  runMigrations: process.env.POSTGRES_RUN_MIGRATIONS,
+  host: configService.get<string>('POSTGRES_HOST'),
+  port: configService.get<number>('POSTGRES_PORT'),
+  user: configService.get<string>('POSTGRES_USER'),
+  password: configService.get<string>('POSTGRES_PASSWORD'),
+  database: configService.get<string>('POSTGRES_DATABASE'),
+  runMigrations: configService.get<string>('POSTGRES_RUN_MIGRATIONS'),
 }));
