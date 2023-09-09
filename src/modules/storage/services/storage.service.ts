@@ -1,5 +1,4 @@
 import * as path from 'node:path';
-import { PassThrough } from 'node:stream';
 
 import {
   DeleteObjectCommand,
@@ -32,19 +31,18 @@ export class StorageService {
   }
 
   public async upload(
-    fileStream: PassThrough,
-    mediaFile: Express.Multer.File,
+    file: Express.Multer.File,
     userId: string,
   ): Promise<string> {
-    const filePath = this.buildPath(mediaFile.originalname, userId);
+    const filePath = this.buildPath(file.originalname, userId);
     await this.getS3Client().send(
       new PutObjectCommand({
         Bucket: this.awsConfig.bucketName,
         Key: filePath,
-        Body: fileStream,
-        ContentType: mediaFile.mimetype,
+        Body: file.buffer,
+        ContentType: file.mimetype,
         ACL: this.awsConfig.objectACL,
-        ContentLength: mediaFile.size,
+        ContentLength: file.size,
       }),
     );
 
@@ -60,7 +58,7 @@ export class StorageService {
     );
   }
 
-  private buildPath(fileName: string, userId: string): string {
+  public buildPath(fileName: string, userId: string): string {
     return `users/${userId}/${v4()}${path.extname(fileName)}`;
   }
 }

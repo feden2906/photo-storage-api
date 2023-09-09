@@ -1,6 +1,6 @@
 import { ListEntityType } from '../../../common/types';
 import { AWSConfigServiceStatic } from '../../../config/aws/configuration.service-static';
-import { ImageEntity } from '../../../database';
+import { MediaEntity } from '../../../database';
 import { MediaListQueryDto } from '../models/dtos/request';
 import {
   MediaListItemResponseDto,
@@ -8,7 +8,7 @@ import {
 } from '../models/dtos/response';
 
 export class MediaMapper {
-  // public static toResponseDto(entity: ImageEntity): MediaResponseDto {
+  // public static toResponseDto(entity: MediaEntity): MediaResponseDto {
   //   return {
   //     id: entity.id,
   //     url: MediaMapper.buildUrl(entity.url),
@@ -18,7 +18,7 @@ export class MediaMapper {
   // }
 
   public static toResponseListDto(
-    list: ListEntityType<ImageEntity>,
+    list: ListEntityType<MediaEntity>,
     query: MediaListQueryDto,
   ): MediaListResponseDto {
     return {
@@ -29,7 +29,7 @@ export class MediaMapper {
   }
 
   public static toResponseListItemDto(
-    entity: ImageEntity,
+    entity: MediaEntity,
   ): MediaListItemResponseDto {
     return {
       id: entity.id,
