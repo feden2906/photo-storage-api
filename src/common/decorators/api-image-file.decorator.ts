@@ -1,9 +1,9 @@
-import { MediaFileConfig } from '../constants';
+import { MediaConfig } from '../constants';
 import { FileUploadHelper } from '../helpers';
-import { ApiFile } from './api-file.decorator';
+import { ApiMedia } from './api-file.decorator';
 
-export function ApiImageFile(fileName = 'image') {
-  return ApiFile(fileName, {
-    fileFilter: FileUploadHelper.validateMimetype(...MediaFileConfig.mimetypes),
+export function ApiMediaFile(fileName = 'image') {
+  return ApiMedia(fileName, {
+    fileFilter: FileUploadHelper.validateMimetype(...MediaConfig.mimetypes),
   });
 }

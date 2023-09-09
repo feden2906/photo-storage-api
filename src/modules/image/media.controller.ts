@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -7,12 +8,13 @@ import {
   Param,
   Post,
   Query,
-  Request,
+  Req,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Request } from 'express';
 
 import { CurrentUser, SkipAuth } from '../../common/decorators';
 import { IUserData } from '../../common/models';
@@ -23,13 +25,13 @@ import { MediaListResponseDto } from './models/dtos/response';
 import { MediaMapper } from './services/media.mapper';
 import { MediaService } from './services/media.service';
 
-@ApiTags('Image')
-@Controller({ path: 'images', version: '1' })
+@ApiTags('Media')
+@Controller({ path: 'media', version: '1' })
 export class MediaController {
   constructor(private imageService: MediaService) {}
 
   @SkipAuth()
-  @ApiOperation({ description: 'Get list of my images' })
+  @ApiOperation({ description: 'Get list of my videos and images' })
   @Get()
   public async getImageList(
     @Query() query: MediaListQueryDto,
@@ -43,7 +45,8 @@ export class MediaController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post('upload')
   public async uploadMedia(
-    @Request() req,
+    @Req() req: Request,
+    @Body() body,
     @UploadedFiles(ParseMediaFiles) files: Array<Express.Multer.File>,
     @CurrentUser() user: IUserData,
   ): Promise<void> {
@@ -51,7 +54,7 @@ export class MediaController {
   }
 
   @ApiBearerAuth()
-  @ApiOperation({ description: 'Delete image' })
+  @ApiOperation({ description: 'Delete video or image' })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(`:${ImageId}`)
   public async deleteImage(

@@ -2,19 +2,19 @@ import { Injectable } from '@nestjs/common';
 import { DataSource, FindOptionsWhere, Repository } from 'typeorm';
 
 import { ListEntityType } from '../../../common/types';
-import { ImageEntity } from '../../../database';
+import { MediaEntity } from '../../../database';
 import { BaseMediaRequestDto, MediaListQueryDto } from '../models/dtos/request';
 import { MediaSortFieldEnum } from '../models/enums';
 
 @Injectable()
-export class MediaRepository extends Repository<ImageEntity> {
+export class MediaRepository extends Repository<MediaEntity> {
   constructor(private readonly dataSource: DataSource) {
-    super(ImageEntity, dataSource.manager);
+    super(MediaEntity, dataSource.manager);
   }
 
   public async getImageList(
     query: MediaListQueryDto,
-  ): Promise<ListEntityType<ImageEntity>> {
+  ): Promise<ListEntityType<MediaEntity>> {
     const queryBuilder = this.createQueryBuilder('image');
     queryBuilder.leftJoin('image.portfolio', 'portfolio');
 
@@ -43,7 +43,7 @@ export class MediaRepository extends Repository<ImageEntity> {
     portfolioId: string,
     dto: BaseMediaRequestDto,
     url: string,
-  ): Promise<ImageEntity> {
+  ): Promise<MediaEntity> {
     return await this.save({
       ...dto,
       url,
@@ -60,7 +60,7 @@ export class MediaRepository extends Repository<ImageEntity> {
   public async findOneByIdAndOwner(
     userId: string,
     imageId: string,
-  ): Promise<ImageEntity> {
+  ): Promise<MediaEntity> {
     return await this.findOneBy({
       id: imageId,
       user: { id: userId },
@@ -68,8 +68,8 @@ export class MediaRepository extends Repository<ImageEntity> {
   }
 
   public async findUrlsBy(
-    where: FindOptionsWhere<ImageEntity>,
-  ): Promise<Pick<ImageEntity, 'url'>[]> {
+    where: FindOptionsWhere<MediaEntity>,
+  ): Promise<Pick<MediaEntity, 'url'>[]> {
     return await this.find({
       where,
       select: { url: true },

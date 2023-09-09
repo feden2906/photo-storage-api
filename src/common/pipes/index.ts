@@ -1,1 +1,1 @@
-export * from './parse-image.pipe';
+export * from './parse-media.pipe';

@@ -1,5 +1,3 @@
-import { PassThrough } from 'node:stream';
-
 import { Injectable } from '@nestjs/common';
 
 import {
@@ -7,7 +5,7 @@ import {
   NoPermissionException,
 } from '../../../common/http';
 import { ListEntityType } from '../../../common/types';
-import { ImageEntity } from '../../../database';
+import { MediaEntity } from '../../../database';
 import { StorageService } from '../../storage/services/storage.service';
 import { MediaListQueryDto } from '../models/dtos/request';
 import { MediaRepository } from './media.repository';
@@ -21,7 +19,7 @@ export class MediaService {
 
   public async getImageList(
     query: MediaListQueryDto,
-  ): Promise<ListEntityType<ImageEntity>> {
+  ): Promise<ListEntityType<MediaEntity>> {
     return await this.imageRepository.getImageList(query);
   }
 
@@ -30,10 +28,7 @@ export class MediaService {
     userId: string,
   ): Promise<void> {
     mediaFiles.map(async (mediaFile) => {
-      const fileStream = new PassThrough();
-      fileStream.end(mediaFile.buffer);
-
-      await this.storageService.upload(fileStream, mediaFile, userId);
+      await this.storageService.upload(mediaFile, userId);
     });
   }
 
@@ -48,7 +43,7 @@ export class MediaService {
   private async checkAbilityToManage(
     userId: string,
     imageId: string,
-  ): Promise<ImageEntity> {
+  ): Promise<MediaEntity> {
     const [isExist, image] = await Promise.all([
       this.imageRepository.isExist(imageId),
       this.imageRepository.findOneByIdAndOwner(userId, imageId),
