@@ -1,7 +1,7 @@
 /* eslint no-console: 0 */
 import { CreateBucketCommand, S3Client } from '@aws-sdk/client-s3';
 
-import { AWSConfigServiceStatic } from '../config/aws/configuration.service-static';
+import { AWSConfigServiceStatic } from '../config/aws/static/configuration.service-static';
 
 const client = new S3Client({
   credentials: {
