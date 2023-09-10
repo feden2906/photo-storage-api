@@ -10,8 +10,6 @@ import { MediaConfig } from '../constants';
 @Injectable()
 export class ParseMediaFiles implements PipeTransform {
   transform(files: Array<Express.Multer.File>): Express.Multer.File[] {
-    console.log(222);
-
     if (files === undefined || files === null || files.length === 0) {
       throw new BadRequestException('Media file is required');
     }
