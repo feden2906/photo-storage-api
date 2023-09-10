@@ -12,25 +12,18 @@ export class MediaRepository extends Repository<MediaEntity> {
     super(MediaEntity, dataSource.manager);
   }
 
-  public async getImageList(
+  public async getMediaList(
     query: MediaListQueryDto,
   ): Promise<ListEntityType<MediaEntity>> {
-    const queryBuilder = this.createQueryBuilder('image');
-    queryBuilder.leftJoin('image.portfolio', 'portfolio');
+    const queryBuilder = this.createQueryBuilder('media');
 
     switch (query.orderBy) {
       case MediaSortFieldEnum.created:
-        queryBuilder.orderBy('image.created', query.order);
+        queryBuilder.orderBy('media.created', query.order);
         break;
     }
 
-    queryBuilder.select([
-      'image.id',
-      'image.url',
-      'image.description',
-      'portfolio.id',
-      'portfolio.name',
-    ]);
+    queryBuilder.select(['media.id', 'media.url', 'media.created']);
     queryBuilder.limit(query.limit);
     queryBuilder.offset(query.offset);
 
@@ -51,18 +44,18 @@ export class MediaRepository extends Repository<MediaEntity> {
     });
   }
 
-  public async isExist(imageId: string): Promise<boolean> {
+  public async isExist(mediaId: string): Promise<boolean> {
     return await this.exist({
-      where: { id: imageId },
+      where: { id: mediaId },
     });
   }
 
   public async findOneByIdAndOwner(
     userId: string,
-    imageId: string,
+    mediaId: string,
   ): Promise<MediaEntity> {
     return await this.findOneBy({
-      id: imageId,
+      id: mediaId,
       user: { id: userId },
     });
   }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { UserEntity } from '../../../database';
-import { MediaRepository } from '../../image/services/media.repository';
+import { MediaRepository } from '../../media/services/media.repository';
 import { StorageService } from '../../storage/services/storage.service';
 import { UserRepository } from './user.repository';
 
@@ -24,7 +24,7 @@ export class UserService {
       user: { id: userId },
     });
     await Promise.all([
-      ...images.map((image) => this.storageService.delete(image.url)),
+      ...images.map((image) => this.storageService.deleteFile(image.url)),
       this.userRepository.delete(userId),
     ]);
   }

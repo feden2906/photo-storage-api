@@ -6,7 +6,7 @@ import { PostgresqlConfigModule } from './config/database/config.module';
 import { typeOrmConfig } from './config/database/type-orm-configuration';
 import { AuthModule } from './modules/auth/auth.module';
 import { HealthModule } from './modules/health/health.module';
-import { MediaModule } from './modules/image/media.module';
+import { MediaModule } from './modules/media/media.module';
 import { UserModule } from './modules/user/user.module';
 
 @Module({

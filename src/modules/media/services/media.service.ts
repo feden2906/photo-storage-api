@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Readable } from 'stream';
 
 import {
   EntityNotFoundException,
@@ -14,29 +15,50 @@ import { MediaRepository } from './media.repository';
 export class MediaService {
   constructor(
     private storageService: StorageService,
-    private imageRepository: MediaRepository,
+    private mediaRepository: MediaRepository,
   ) {}
 
-  public async getImageList(
+  public async getMediaList(
     query: MediaListQueryDto,
   ): Promise<ListEntityType<MediaEntity>> {
-    return await this.imageRepository.getImageList(query);
+    return await this.mediaRepository.getMediaList(query);
   }
 
   public async uploadMediaFiles(
     mediaFiles: Array<Express.Multer.File>,
     userId: string,
   ): Promise<void> {
-    mediaFiles.map(async (mediaFile) => {
-      await this.storageService.upload(mediaFile, userId);
-    });
+    for (const mediaFile of mediaFiles) {
+      const stream = Readable.from(mediaFile.buffer);
+
+      await new Promise<void>((resolve, reject) => {
+        stream.on('data', (chunk) => {
+          console.log('--- chunk ---');
+
+          this.storageService.saveFile(chunk, mediaFile, userId);
+        });
+        stream.on('end', () => {
+          console.log('--- success ---');
+          stream.emit('close');
+          resolve();
+        });
+        stream.on('error', (error) => {
+          reject(error);
+        });
+      });
+    }
+    // await Promise.all(
+    //   mediaFiles.map(async (file) => {
+    //     await this.storageService.saveFile(stream, file, userId);
+    //   }),
+    // );
   }
 
-  public async deleteImage(userId: string, imageId: string): Promise<void> {
+  public async deleteMedia(userId: string, imageId: string): Promise<void> {
     const image = await this.checkAbilityToManage(userId, imageId);
     await Promise.all([
-      this.storageService.delete(image.url),
-      this.imageRepository.delete(imageId),
+      this.storageService.deleteFile(image.url),
+      this.mediaRepository.delete(imageId),
     ]);
   }
 
@@ -45,8 +67,8 @@ export class MediaService {
     imageId: string,
   ): Promise<MediaEntity> {
     const [isExist, image] = await Promise.all([
-      this.imageRepository.isExist(imageId),
-      this.imageRepository.findOneByIdAndOwner(userId, imageId),
+      this.mediaRepository.isExist(imageId),
+      this.mediaRepository.findOneByIdAndOwner(userId, imageId),
     ]);
     if (!isExist) throw new EntityNotFoundException();
     if (isExist && !image) throw new NoPermissionException();

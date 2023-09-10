@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { MediaModule } from '../image/media.module';
+import { MediaModule } from '../media/media.module';
 import { StorageModule } from '../storage/storage.module';
 import { UserRepository } from './services/user.repository';
 import { UserService } from './services/user.service';

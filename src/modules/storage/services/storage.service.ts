@@ -1,64 +1,28 @@
-import * as path from 'node:path';
+import { Inject, Injectable } from '@nestjs/common';
+import { Readable } from 'stream';
 
-import {
-  DeleteObjectCommand,
-  PutObjectCommand,
-  S3Client,
-} from '@aws-sdk/client-s3';
-import { S3ClientConfig } from '@aws-sdk/client-s3/dist-types/S3Client';
-import { Injectable } from '@nestjs/common';
-import { v4 } from 'uuid';
-
-import { AWSConfigService } from '../../../config/aws/configuration.service';
+import { IStorageProviderService } from '../models/interfaces/storage-provider-service.interface';
 
 @Injectable()
-export class StorageService {
-  constructor(private awsConfig: AWSConfigService) {}
+export class StorageService implements IStorageProviderService {
+  constructor(
+    @Inject('StorageProviderService')
+    private readonly storageProvideService: IStorageProviderService,
+  ) {}
 
-  private getS3Client(): S3Client {
-    const configuration: S3ClientConfig = {
-      credentials: {
-        accessKeyId: this.awsConfig.accessKeyId,
-        secretAccessKey: this.awsConfig.secretAccessKey,
-      },
-    };
-    const endpoint = this.awsConfig.endpoint;
-    if (endpoint) {
-      configuration.endpoint = endpoint;
-      configuration.forcePathStyle = true;
-    }
-    return new S3Client(configuration);
+  public async getFile(filePath: string): Promise<Readable> {
+    return await this.storageProvideService.getFile(filePath);
   }
 
-  public async upload(
+  public async saveFile(
+    readable: Readable,
     file: Express.Multer.File,
     userId: string,
   ): Promise<string> {
-    const filePath = this.buildPath(file.originalname, userId);
-    await this.getS3Client().send(
-      new PutObjectCommand({
-        Bucket: this.awsConfig.bucketName,
-        Key: filePath,
-        Body: file.buffer,
-        ContentType: file.mimetype,
-        ACL: this.awsConfig.objectACL,
-        ContentLength: file.size,
-      }),
-    );
-
-    return filePath;
+    return await this.storageProvideService.saveFile(readable, file, userId);
   }
 
-  public async delete(filePath: string): Promise<void> {
-    await this.getS3Client().send(
-      new DeleteObjectCommand({
-        Bucket: this.awsConfig.bucketName,
-        Key: filePath,
-      }),
-    );
-  }
-
-  public buildPath(fileName: string, userId: string): string {
-    return `users/${userId}/${v4()}${path.extname(fileName)}`;
+  public async deleteFile(filePath: string): Promise<void> {
+    await this.storageProvideService.deleteFile(filePath);
   }
 }
