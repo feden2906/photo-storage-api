@@ -10,7 +10,6 @@ import {
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
-import { FilesInterceptor } from '@nestjs/platform-express';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -21,6 +20,7 @@ import {
 
 import { CurrentUser } from '../../common/decorators';
 import { IUserData } from '../../common/models';
+import { LocalFilesInterceptor } from '../storage/file.interseptor';
 import { ImageId } from './models/constants';
 import { MediaListQueryDto } from './models/dtos/request';
 import { MediaListResponseDto } from './models/dtos/response';
@@ -59,14 +59,16 @@ export class MediaController {
     },
   })
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FilesInterceptor('files'))
+  @UseInterceptors(LocalFilesInterceptor)
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post('upload')
   public async uploadMedia(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @UploadedFiles() files: Array<Express.Multer.File>,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @CurrentUser() user: IUserData,
   ): Promise<void> {
-    await this.imageService.uploadMediaFiles(files, user.userId);
+    // await this.imageService.uploadMediaFiles(files, user.userId);
   }
 
   @ApiOperation({ description: 'Delete video or image' })

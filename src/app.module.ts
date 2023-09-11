@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AppGateway } from './app.gateway';
 import { AppConfigModule } from './config/app/config.module';
 import { PostgresqlConfigModule } from './config/database/config.module';
 import { typeOrmConfig } from './config/database/type-orm-configuration';
@@ -20,6 +21,6 @@ import { UserModule } from './modules/user/user.module';
     HealthModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [AppGateway],
 })
 export class AppModule {}
