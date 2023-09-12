@@ -1,7 +1,7 @@
 import { Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 import { CreatedUpdatedDateModel } from './_created-updated-date.model';
-import { ImageEntity } from './image.entity';
+import { MediaEntity } from './media.entity';
 import { UserEntity } from './user.entity';
 
 @Entity('album')
@@ -9,14 +9,14 @@ export class AlbumEntity extends CreatedUpdatedDateModel {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToMany(() => ImageEntity, (entity) => entity.albums, { nullable: true })
-  images?: ImageEntity[];
+  @ManyToMany(() => MediaEntity, (entity) => entity.albums, { nullable: true })
+  images?: MediaEntity[];
 
-  @ManyToOne(() => ImageEntity, (entity) => entity.albums_title, {
+  @ManyToOne(() => MediaEntity, (entity) => entity.albums_title, {
     onDelete: 'SET NULL',
     nullable: true,
   })
-  title_image?: ImageEntity;
+  title_image?: MediaEntity;
 
   @ManyToOne(() => UserEntity, (entity) => entity.own_albums, {
     onDelete: 'CASCADE',

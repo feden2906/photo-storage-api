@@ -2,14 +2,14 @@ import { IsEnum, IsOptional } from 'class-validator';
 
 import { OrderEnum } from '../../../../../common/models';
 import { PaginationQueryAbstractDto } from '../../../../../common/models/dtos';
-import { ImageSortFieldEnum } from '../../enums';
+import { MediaSortFieldEnum } from '../../enums';
 
-export class ImageListQueryDto extends PaginationQueryAbstractDto {
+export class MediaListQueryDto extends PaginationQueryAbstractDto {
   @IsOptional()
   @IsEnum(OrderEnum)
   order?: OrderEnum = OrderEnum.DESC;
 
   @IsOptional()
-  @IsEnum(ImageSortFieldEnum)
-  orderBy?: ImageSortFieldEnum = ImageSortFieldEnum.created;
+  @IsEnum(MediaSortFieldEnum)
+  orderBy?: MediaSortFieldEnum = MediaSortFieldEnum.created;
 }

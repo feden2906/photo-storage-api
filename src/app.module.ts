@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AppGateway } from './app.gateway';
 import { AppConfigModule } from './config/app/config.module';
 import { PostgresqlConfigModule } from './config/database/config.module';
 import { typeOrmConfig } from './config/database/type-orm-configuration';
 import { AuthModule } from './modules/auth/auth.module';
 import { HealthModule } from './modules/health/health.module';
-import { ImageModule } from './modules/image/image.module';
+import { MediaModule } from './modules/media/media.module';
 import { UserModule } from './modules/user/user.module';
 
 @Module({
@@ -15,11 +16,11 @@ import { UserModule } from './modules/user/user.module';
     AppConfigModule,
     TypeOrmModule.forRootAsync(typeOrmConfig),
     AuthModule,
-    ImageModule,
+    MediaModule,
     UserModule,
     HealthModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [AppGateway],
 })
 export class AppModule {}
