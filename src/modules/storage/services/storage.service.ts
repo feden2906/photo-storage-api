@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { StorageEngine } from 'multer';
 import { Readable } from 'stream';
 
 import { IStorageProviderService } from '../models/interfaces/storage-provider-service.interface';
@@ -12,6 +13,10 @@ export class StorageService implements IStorageProviderService {
 
   public async getFile(filePath: string): Promise<Readable> {
     return await this.storageProvideService.getFile(filePath);
+  }
+
+  public getMulterStorage(): StorageEngine {
+    return this.storageProvideService.getMulterStorage();
   }
 
   public async saveFile(

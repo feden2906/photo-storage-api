@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Readable } from 'stream';
 
 import {
   EntityNotFoundException,
@@ -7,6 +6,7 @@ import {
 } from '../../../common/http';
 import { ListEntityType } from '../../../common/types';
 import { MediaEntity } from '../../../database';
+import { FilesNotExistException } from '../../storage/exceptions/files-not-exist.exception';
 import { StorageService } from '../../storage/services/storage.service';
 import { MediaListQueryDto } from '../models/dtos/request';
 import { MediaRepository } from './media.repository';
@@ -25,33 +25,35 @@ export class MediaService {
   }
 
   public async uploadMediaFiles(
-    mediaFiles: Array<Express.Multer.File>,
+    mediaPaths: string[],
     userId: string,
   ): Promise<void> {
-    for (const mediaFile of mediaFiles) {
-      const stream = Readable.from(mediaFile.buffer);
-
-      await new Promise<void>((resolve, reject) => {
-        stream.on('data', (chunk) => {
-          console.log('--- chunk ---');
-
-          this.storageService.saveFile(chunk, mediaFile, userId);
-        });
-        stream.on('end', () => {
-          console.log('--- success ---');
-          stream.emit('close');
-          resolve();
-        });
-        stream.on('error', (error) => {
-          reject(error);
-        });
-      });
+    if (!mediaPaths.length) {
+      throw new FilesNotExistException();
     }
-    // await Promise.all(
-    //   mediaFiles.map(async (file) => {
-    //     await this.storageService.saveFile(stream, file, userId);
-    //   }),
-    // );
+
+    for (const path of mediaPaths) {
+      await this.mediaRepository.createImage(path, userId);
+    }
+    // for (const mediaFile of mediaFiles) {
+    //   const stream = Readable.from(mediaFile.buffer);
+    //
+    //   await new Promise<void>((resolve, reject) => {
+    //     stream.on('data', (chunk) => {
+    //       console.log('--- chunk ---');
+    //
+    //       this.storageService.saveFile(chunk, mediaFile, userId);
+    //     });
+    //     stream.on('end', () => {
+    //       console.log('--- success ---');
+    //       stream.emit('close');
+    //       resolve();
+    //     });
+    //     stream.on('error', (error) => {
+    //       reject(error);
+    //     });
+    //   });
+    // }
   }
 
   public async deleteMedia(userId: string, imageId: string): Promise<void> {

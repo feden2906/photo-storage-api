@@ -7,7 +7,6 @@ import {
   Param,
   Post,
   Query,
-  UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
 import {
@@ -18,9 +17,9 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { CurrentUser } from '../../common/decorators';
+import { CurrentUser, MediaPaths } from '../../common/decorators';
 import { IUserData } from '../../common/models';
-import { LocalFilesInterceptor } from '../storage/file.interseptor';
+import { LocalFilesInterceptor } from '../storage/file.interceptor';
 import { ImageId } from './models/constants';
 import { MediaListQueryDto } from './models/dtos/request';
 import { MediaListResponseDto } from './models/dtos/response';
@@ -63,12 +62,10 @@ export class MediaController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post('upload')
   public async uploadMedia(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    @UploadedFiles() files: Array<Express.Multer.File>,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    @MediaPaths() mediaPaths: string[],
     @CurrentUser() user: IUserData,
   ): Promise<void> {
-    // await this.imageService.uploadMediaFiles(files, user.userId);
+    await this.imageService.uploadMediaFiles(mediaPaths, user.userId);
   }
 
   @ApiOperation({ description: 'Delete video or image' })

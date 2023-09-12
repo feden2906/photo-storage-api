@@ -3,7 +3,7 @@ import { DataSource, FindOptionsWhere, Repository } from 'typeorm';
 
 import { ListEntityType } from '../../../common/types';
 import { MediaEntity } from '../../../database';
-import { BaseMediaRequestDto, MediaListQueryDto } from '../models/dtos/request';
+import { MediaListQueryDto } from '../models/dtos/request';
 import { MediaSortFieldEnum } from '../models/enums';
 
 @Injectable()
@@ -31,16 +31,22 @@ export class MediaRepository extends Repository<MediaEntity> {
     return { data, total };
   }
 
-  public async createImage(
-    userId: string,
-    portfolioId: string,
-    dto: BaseMediaRequestDto,
-    url: string,
-  ): Promise<MediaEntity> {
+  // public async createImage(
+  //   userId: string,
+  //   dto: BaseMediaRequestDto,
+  //   url: string,
+  // ): Promise<MediaEntity> {
+  //   return await this.save({
+  //     ...dto,
+  //     url,
+  //     portfolio: { id: portfolioId },
+  //   });
+  // }
+
+  public async createImage(url: string, userId: string): Promise<MediaEntity> {
     return await this.save({
-      ...dto,
       url,
-      portfolio: { id: portfolioId },
+      user: { id: userId },
     });
   }
 

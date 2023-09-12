@@ -9,4 +9,4 @@ export const MediaConfig = {
     'video/quicktime',
     'video/mp4',
   ],
-} as const;
+};

@@ -8,15 +8,19 @@ import {
 } from '@aws-sdk/client-s3';
 import { S3ClientConfig } from '@aws-sdk/client-s3/dist-types/S3Client';
 import { Injectable } from '@nestjs/common';
+import { StorageEngine } from 'multer';
+import * as multerS3 from 'multer-s3';
 import { Readable } from 'stream';
 import { v4 } from 'uuid';
 
+import { IUserData } from '../../../common/models';
 import { AWSConfigService } from '../../../config/aws/configuration.service';
+import { ICustomRequest } from '../models/interfaces/custom-request.type';
 import { IStorageProviderService } from '../models/interfaces/storage-provider-service.interface';
 
 @Injectable()
 export class S3StorageService implements IStorageProviderService {
-  private client: S3Client;
+  private readonly client: S3Client;
   constructor(private awsConfig: AWSConfigService) {
     const configuration: S3ClientConfig = {
       credentials: {
@@ -70,22 +74,24 @@ export class S3StorageService implements IStorageProviderService {
     );
   }
 
-  // public getMulterStorage(userId: string): multer.Multer {
-  //   return multer({
-  //     storage: multerS3({
-  //       s3: this.client,
-  //       bucket: this.awsConfig.bucketName,
-  //       metadata: function (req, file, cb) {
-  //         cb(null, { fieldName: file.fieldname });
-  //       },
-  //       key: (req, file) => {
-  //         return this.buildPath(file.originalname, userId);
-  //       },
-  //     }),
-  //   });
-  // }
+  public getMulterStorage(): StorageEngine {
+    return multerS3({
+      s3: this.client,
+      bucket: this.awsConfig.bucketName,
+      metadata: function (req, file, cb) {
+        cb(null, { fieldName: file.fieldname });
+      },
+      key: (req: ICustomRequest, file, cb) => {
+        const user = req.user as IUserData;
+        const path = this.buildPath(file.originalname, user.userId);
+        req.paths.push(path);
 
-  public buildPath(fileName: string, userId: string): string {
+        cb(null, path);
+      },
+    });
+  }
+
+  private buildPath(fileName: string, userId: string): string {
     return `users/${userId}/${v4()}${path.extname(fileName)}`;
   }
 }

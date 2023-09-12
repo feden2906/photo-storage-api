@@ -1,6 +1,9 @@
+import { StorageEngine } from 'multer';
 import { Readable } from 'stream';
 
 export abstract class IStorageProviderService {
+  abstract getMulterStorage(): StorageEngine;
+
   abstract getFile(filePath: string): Promise<Readable>;
 
   abstract saveFile(
