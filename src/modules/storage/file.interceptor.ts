@@ -1,4 +1,4 @@
-import { Inject, Injectable, NestInterceptor } from '@nestjs/common';
+import { Injectable, NestInterceptor } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 
 import { mediaValidation } from '../../common/helpers';
@@ -10,7 +10,6 @@ import { StorageService } from './services/storage.service';
 export class LocalFilesInterceptor implements NestInterceptor {
   constructor(
     private awsConfig: AWSConfigService,
-    @Inject('StorageProviderService')
     private readonly storageService: StorageService,
   ) {}
   intercept(...args: Parameters<NestInterceptor['intercept']>) {

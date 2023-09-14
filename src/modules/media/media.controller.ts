@@ -7,17 +7,13 @@ import {
   Param,
   Post,
   Query,
+  Res,
   UseInterceptors,
 } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiConsumes,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
 
-import { CurrentUser, MediaPaths } from '../../common/decorators';
+import { CurrentUser, MediaPaths, SkipAuth } from '../../common/decorators';
 import { IUserData } from '../../common/models';
 import { LocalFilesInterceptor } from '../storage/file.interceptor';
 import { ImageId } from './models/constants';
@@ -26,15 +22,26 @@ import { MediaListResponseDto } from './models/dtos/response';
 import { MediaMapper } from './services/media.mapper';
 import { MediaService } from './services/media.service';
 
-@ApiBearerAuth()
+@SkipAuth()
 @ApiTags('Media')
 @Controller({ path: 'media', version: '1' })
 export class MediaController {
   constructor(private imageService: MediaService) {}
 
+  @ApiOperation({ description: 'Download binary media content' })
+  @Get('download')
+  public async downloadMedia(
+    @Query() query: MediaListQueryDto,
+    @Res() res: Response,
+  ) {
+    res.writeHead(200, { 'Content-Type': 'application/octet-stream' });
+    const stream = await this.imageService.getMediaStreams(query);
+    stream.pipe(res);
+  }
+
   @ApiOperation({ description: 'Get list of my videos and images' })
   @Get()
-  public async getImageList(
+  public async getMediaList(
     @Query() query: MediaListQueryDto,
   ): Promise<MediaListResponseDto> {
     const result = await this.imageService.getMediaList(query);

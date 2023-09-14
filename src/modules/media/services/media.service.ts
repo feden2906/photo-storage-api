@@ -10,6 +10,7 @@ import { FilesNotExistException } from '../../storage/exceptions/files-not-exist
 import { StorageService } from '../../storage/services/storage.service';
 import { MediaListQueryDto } from '../models/dtos/request';
 import { MediaRepository } from './media.repository';
+import CombinedStream = require('combined-stream');
 
 @Injectable()
 export class MediaService {
@@ -22,6 +23,20 @@ export class MediaService {
     query: MediaListQueryDto,
   ): Promise<ListEntityType<MediaEntity>> {
     return await this.mediaRepository.getMediaList(query);
+  }
+
+  public async getMediaStreams(
+    query: MediaListQueryDto,
+  ): Promise<CombinedStream> {
+    const combinedStream = CombinedStream.create();
+
+    const { data: mediaList } = await this.mediaRepository.getMediaList(query);
+
+    for (const media of mediaList) {
+      combinedStream.append(await this.storageService.getFile(media.url));
+    }
+
+    return combinedStream;
   }
 
   public async uploadMediaFiles(

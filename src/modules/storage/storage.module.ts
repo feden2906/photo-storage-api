@@ -16,12 +16,6 @@ import { StorageService } from './services/storage.service';
     StorageService,
     LocalFilesInterceptor,
   ],
-  exports: [
-    StorageService,
-    {
-      provide: 'StorageProviderService',
-      useClass: S3StorageService,
-    },
-  ],
+  exports: [StorageService],
 })
 export class StorageModule {}
