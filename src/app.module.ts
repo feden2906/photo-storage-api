@@ -5,6 +5,7 @@ import { AppGateway } from './app.gateway';
 import { AppConfigModule } from './config/app/config.module';
 import { PostgresqlConfigModule } from './config/database/config.module';
 import { typeOrmConfig } from './config/database/type-orm-configuration';
+import { AlbumModule } from './modules/album/album.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { HealthModule } from './modules/health/health.module';
 import { MediaModule } from './modules/media/media.module';
@@ -19,8 +20,8 @@ import { UserModule } from './modules/user/user.module';
     MediaModule,
     UserModule,
     HealthModule,
+    AlbumModule,
   ],
-  controllers: [],
   providers: [AppGateway],
 })
 export class AppModule {}
