@@ -21,4 +21,8 @@ export class AppConfigService {
   get hostname(): string {
     return this.appConfiguration.hostname;
   }
+
+  get fallbackLanguage(): string {
+    return this.appConfiguration.fallbackLanguage;
+  }
 }

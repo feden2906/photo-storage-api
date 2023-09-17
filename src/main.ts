@@ -2,6 +2,7 @@ import { INestApplication, Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as compression from 'compression';
+import { I18nMiddleware } from 'nestjs-i18n';
 
 import { AppModule } from './app.module';
 import { SwaggerHelper } from './common/helpers';
@@ -59,6 +60,8 @@ async function bootstrap() {
   app.useGlobalFilters(new GlobalExceptionFilter());
   setCorsPolicy(app);
   initSwagger(app);
+
+  app.use(I18nMiddleware);
 
   const appConfig: AppConfigService =
     app.get<AppConfigService>(AppConfigService);

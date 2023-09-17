@@ -7,7 +7,8 @@
       "@nestjs/swagger"
     ],
     "assets": [
-      "**/*.ejs"
+      "**/*.ejs",
+      { "include": "i18n/**/*", "watchAssets": true, "outDir": "dist/src" }
     ]
   }
 }
