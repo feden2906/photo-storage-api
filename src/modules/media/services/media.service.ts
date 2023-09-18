@@ -66,14 +66,14 @@ export class MediaService {
 
   private async checkAbilityToManage(
     userId: string,
-    imageId: string,
+    mediaId: string,
   ): Promise<MediaEntity> {
-    const [isExist, image] = await Promise.all([
-      this.mediaRepository.isExist(imageId),
-      this.mediaRepository.findOneByIdAndOwner(userId, imageId),
+    const [isExist, media] = await Promise.all([
+      this.mediaRepository.isExist(mediaId),
+      this.mediaRepository.findOneByIdAndOwner(userId, mediaId),
     ]);
     if (!isExist) throw new EntityNotFoundException();
-    if (isExist && !image) throw new NoPermissionException();
-    return image;
+    if (isExist && !media) throw new NoPermissionException();
+    return media;
   }
 }

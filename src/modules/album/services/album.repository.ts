@@ -19,4 +19,25 @@ export class AlbumRepository extends Repository<AlbumEntity> {
       album_owner: { id: userId },
     });
   }
+
+  public async findOneByIdAndOwner(
+    userId: string,
+    albumId: string,
+  ): Promise<AlbumEntity> {
+    return await this.findOne({
+      where: {
+        id: albumId,
+        album_owner: { id: userId },
+      },
+      relations: {
+        images: true,
+      },
+    });
+  }
+
+  public async isExist(albumId: string): Promise<boolean> {
+    return await this.exist({
+      where: { id: albumId },
+    });
+  }
 }
