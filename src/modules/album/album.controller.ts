@@ -1,11 +1,24 @@
-import { Body, Controller, Param, ParseUUIDPipe, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  HttpCode,
+  HttpStatus,
+  Param,
+  ParseUUIDPipe,
+  Post,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CurrentUser } from '../../common/decorators';
 import { IUserData } from '../../common/models';
-import { AlbumCreateRequestDto } from './models/dtos/request';
-import { AlbumUploadRequestDto } from './models/dtos/request/album-upload.request.dto';
-import { AlbumResponseDto } from './models/dtos/response/album.response.dto';
+import { AlbumId } from './models/constants';
+import {
+  AlbumCreateRequestDto,
+  AlbumDeleteMediaRequestDto,
+  AlbumUploadMediaRequestDto,
+} from './models/dtos/request';
+import { AlbumResponseDto } from './models/dtos/response';
 import { AlbumMapper } from './services/album.mapper';
 import { AlbumService } from './services/album.service';
 
@@ -25,14 +38,28 @@ export class AlbumController {
   }
 
   @ApiOperation({
-    description: 'Upload media files to album',
+    description: 'Uploading media files to album',
   })
-  @Post(':albumId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Post(`:${AlbumId}`)
   public async uploadMedia(
-    @Param('albumId', ParseUUIDPipe) albumId: string,
-    @Body() dto: AlbumUploadRequestDto,
+    @Param(`${AlbumId}`, ParseUUIDPipe) albumId: string,
+    @Body() dto: AlbumUploadMediaRequestDto,
     @CurrentUser() user: IUserData,
   ) {
     await this.albumService.uploadMedia(albumId, user.userId, dto);
+  }
+
+  @ApiOperation({
+    description: 'Deleting media files from album',
+  })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete(`:${AlbumId}`)
+  public async deleteMedia(
+    @Param(`${AlbumId}`, ParseUUIDPipe) albumId: string,
+    @Body() dto: AlbumDeleteMediaRequestDto,
+    @CurrentUser() user: IUserData,
+  ) {
+    await this.albumService.deleteMedia(albumId, user.userId, dto);
   }
 }

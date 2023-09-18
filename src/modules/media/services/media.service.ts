@@ -64,7 +64,7 @@ export class MediaService {
     ]);
   }
 
-  private async checkAbilityToManage(
+  public async checkAbilityToManage(
     userId: string,
     mediaId: string,
   ): Promise<MediaEntity> {

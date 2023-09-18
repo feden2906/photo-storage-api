@@ -10,6 +10,6 @@ import { MediaService } from './services/media.service';
   imports: [AWSConfigModule, StorageModule],
   controllers: [MediaController],
   providers: [MediaService, MediaRepository],
-  exports: [MediaRepository],
+  exports: [MediaRepository, MediaService],
 })
 export class MediaModule {}

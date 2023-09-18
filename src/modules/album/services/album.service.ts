@@ -5,16 +5,19 @@ import {
   NoPermissionException,
 } from '../../../common/http';
 import { AlbumEntity } from '../../../database';
-import { MediaRepository } from '../../media/services/media.repository';
-import { AlbumCreateRequestDto } from '../models/dtos/request';
-import { AlbumUploadRequestDto } from '../models/dtos/request/album-upload.request.dto';
+import { MediaService } from '../../media/services/media.service';
+import {
+  AlbumCreateRequestDto,
+  AlbumDeleteMediaRequestDto,
+  AlbumUploadMediaRequestDto,
+} from '../models/dtos/request';
 import { AlbumRepository } from './album.repository';
 
 @Injectable()
 export class AlbumService {
   constructor(
     private albumRepository: AlbumRepository,
-    private mediaRepository: MediaRepository,
+    private mediaService: MediaService,
   ) {}
   public async createAlbum(
     dto: AlbumCreateRequestDto,
@@ -23,20 +26,38 @@ export class AlbumService {
     return await this.albumRepository.createAlbum(dto, userId);
   }
 
+  public async deleteMedia(
+    albumId: string,
+    userId: string,
+    dto: AlbumDeleteMediaRequestDto,
+  ): Promise<void> {
+    const { mediaIds } = dto;
+
+    const album = await this.checkAbilityToManage(userId, albumId);
+
+    for (const mediaId of mediaIds) {
+      await this.mediaService.checkAbilityToManage(userId, mediaId);
+    }
+
+    for (const mediaId of mediaIds) {
+      album.images = album.images.filter((image) => image.id !== mediaId);
+    }
+
+    await this.albumRepository.save(album);
+  }
+
   public async uploadMedia(
     albumId: string,
     userId: string,
-    dto: AlbumUploadRequestDto,
+    dto: AlbumUploadMediaRequestDto,
   ): Promise<void> {
     const album = await this.checkAbilityToManage(userId, albumId);
 
     for (const mediaId of dto.mediaIds) {
-      const media = await this.mediaRepository.findOneByIdAndOwner(
+      const media = await this.mediaService.checkAbilityToManage(
         userId,
         mediaId,
       );
-      if (!media) throw new NoPermissionException();
-
       album.images.push(media);
     }
 
