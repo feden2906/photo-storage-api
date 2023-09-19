@@ -20,6 +20,17 @@ export class AlbumRepository extends Repository<AlbumEntity> {
     });
   }
 
+  public async findManyByOwnerId(userId: string): Promise<AlbumEntity[]> {
+    return await this.find({
+      where: {
+        album_owner: { id: userId },
+      },
+      relations: {
+        title_image: true,
+      },
+    });
+  }
+
   public async findOneByIdAndOwner(
     userId: string,
     albumId: string,
@@ -30,7 +41,7 @@ export class AlbumRepository extends Repository<AlbumEntity> {
         album_owner: { id: userId },
       },
       relations: {
-        images: true,
+        media: true,
       },
     });
   }

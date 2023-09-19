@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   HttpCode,
   HttpStatus,
   Param,
@@ -15,8 +16,8 @@ import { IUserData } from '../../common/models';
 import { AlbumId } from './models/constants';
 import {
   AlbumCreateRequestDto,
-  AlbumDeleteMediaRequestDto,
-  AlbumUploadMediaRequestDto,
+  MediaAddToAlbumRequestDto,
+  MediaRemoveFromAlbumRequestDto,
 } from './models/dtos/request';
 import { AlbumResponseDto } from './models/dtos/response';
 import { AlbumMapper } from './services/album.mapper';
@@ -27,7 +28,13 @@ import { AlbumService } from './services/album.service';
 @Controller({ path: 'album', version: '1' })
 export class AlbumController {
   constructor(private albumService: AlbumService) {}
-  @ApiOperation({ description: 'Create album' })
+
+  @ApiOperation({ description: 'Get a list of albums' })
+  @Get()
+  public async getAlbumList(@CurrentUser() user: IUserData) {
+    return await this.albumService.getListAlbum(user.userId);
+  }
+  @ApiOperation({ description: 'Creating an album' })
   @Post()
   public async createAlbum(
     @CurrentUser() user: IUserData,
@@ -38,40 +45,40 @@ export class AlbumController {
   }
 
   @ApiOperation({
-    description: 'Deleting album',
+    description: 'Deleting an album',
   })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(`:${AlbumId}`)
   public async deleteAlbum(
     @CurrentUser() user: IUserData,
-    @Param(`${AlbumId}`, ParseUUIDPipe) albumId: string,
+    @Param(AlbumId, ParseUUIDPipe) albumId: string,
   ) {
     await this.albumService.deleteAlbum(user.userId, albumId);
   }
 
   @ApiOperation({
-    description: 'Uploading media files to album',
+    description: 'Uploading media files to an album',
   })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post(`media/:${AlbumId}`)
-  public async uploadMedia(
-    @Param(`${AlbumId}`, ParseUUIDPipe) albumId: string,
-    @Body() dto: AlbumUploadMediaRequestDto,
+  public async addMedia(
+    @Param(AlbumId, ParseUUIDPipe) albumId: string,
+    @Body() dto: MediaAddToAlbumRequestDto,
     @CurrentUser() user: IUserData,
   ) {
-    await this.albumService.uploadMedia(user.userId, albumId, dto);
+    await this.albumService.addMedia(user.userId, albumId, dto);
   }
 
   @ApiOperation({
-    description: 'Deleting media files from album',
+    description: 'Removing media files from album',
   })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(`media/:${AlbumId}`)
-  public async deleteMedia(
-    @Param(`${AlbumId}`, ParseUUIDPipe) albumId: string,
-    @Body() dto: AlbumDeleteMediaRequestDto,
+  public async removeMedia(
+    @Param(AlbumId, ParseUUIDPipe) albumId: string,
+    @Body() dto: MediaRemoveFromAlbumRequestDto,
     @CurrentUser() user: IUserData,
   ) {
-    await this.albumService.deleteMedia(albumId, user.userId, dto);
+    await this.albumService.removeMedia(albumId, user.userId, dto);
   }
 }

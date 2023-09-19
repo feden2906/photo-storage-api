@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class ChgAlbum1695108205450 implements MigrationInterface {
-  name = 'ChgAlbum1695108205450';
+export class ChangeFields1695109740151 implements MigrationInterface {
+  name = 'ChangeFields1695109740151';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(

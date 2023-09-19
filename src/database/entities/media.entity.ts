@@ -20,7 +20,7 @@ export class MediaEntity extends CreatedUpdatedDateModel {
   @Column('text', { nullable: false })
   url: string;
 
-  @ManyToMany(() => AlbumEntity, (entity) => entity.images, { nullable: true })
+  @ManyToMany(() => AlbumEntity, (entity) => entity.media, { nullable: true })
   @JoinTable()
   albums?: AlbumEntity[];
 
@@ -29,7 +29,7 @@ export class MediaEntity extends CreatedUpdatedDateModel {
   })
   albums_title?: AlbumEntity[];
 
-  @ManyToOne(() => UserEntity, (entity) => entity.images, {
+  @ManyToOne(() => UserEntity, (entity) => entity.media, {
     onDelete: 'CASCADE',
   })
   user: UserEntity;

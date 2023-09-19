@@ -22,7 +22,7 @@ export class AlbumEntity extends CreatedUpdatedDateModel {
     nullable: true,
     onDelete: 'CASCADE',
   })
-  images?: MediaEntity[];
+  media?: MediaEntity[];
 
   @ManyToOne(() => MediaEntity, (entity) => entity.albums_title, {
     onDelete: 'SET NULL',

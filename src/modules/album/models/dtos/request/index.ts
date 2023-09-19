@@ -1,3 +1,3 @@
 export * from './album-create.request.dto';
-export * from './album-delete-media.request.dto';
-export * from './album-upload-media.request.dto';
+export * from './media-remove-from-album.request.dto';
+export * from './media-add-to-album.request.dto';

@@ -1,6 +1,6 @@
 import { ArrayMinSize, IsArray, IsUUID } from 'class-validator';
 
-export class AlbumUploadMediaRequestDto {
+export class MediaAddToAlbumRequestDto {
   @IsArray()
   @IsUUID(undefined, { each: true })
   @ArrayMinSize(1)
