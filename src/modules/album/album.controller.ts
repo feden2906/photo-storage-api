@@ -38,23 +38,35 @@ export class AlbumController {
   }
 
   @ApiOperation({
+    description: 'Deleting album',
+  })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete(`:${AlbumId}`)
+  public async deleteAlbum(
+    @CurrentUser() user: IUserData,
+    @Param(`${AlbumId}`, ParseUUIDPipe) albumId: string,
+  ) {
+    await this.albumService.deleteAlbum(user.userId, albumId);
+  }
+
+  @ApiOperation({
     description: 'Uploading media files to album',
   })
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Post(`:${AlbumId}`)
+  @Post(`media/:${AlbumId}`)
   public async uploadMedia(
     @Param(`${AlbumId}`, ParseUUIDPipe) albumId: string,
     @Body() dto: AlbumUploadMediaRequestDto,
     @CurrentUser() user: IUserData,
   ) {
-    await this.albumService.uploadMedia(albumId, user.userId, dto);
+    await this.albumService.uploadMedia(user.userId, albumId, dto);
   }
 
   @ApiOperation({
     description: 'Deleting media files from album',
   })
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Delete(`:${AlbumId}`)
+  @Delete(`media/:${AlbumId}`)
   public async deleteMedia(
     @Param(`${AlbumId}`, ParseUUIDPipe) albumId: string,
     @Body() dto: AlbumDeleteMediaRequestDto,

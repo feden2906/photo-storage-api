@@ -18,7 +18,10 @@ export class AlbumEntity extends CreatedUpdatedDateModel {
   @Column('text')
   name: string;
 
-  @ManyToMany(() => MediaEntity, (entity) => entity.albums, { nullable: true })
+  @ManyToMany(() => MediaEntity, (entity) => entity.albums, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
   images?: MediaEntity[];
 
   @ManyToOne(() => MediaEntity, (entity) => entity.albums_title, {

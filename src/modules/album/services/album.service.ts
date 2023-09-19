@@ -26,6 +26,12 @@ export class AlbumService {
     return await this.albumRepository.createAlbum(dto, userId);
   }
 
+  public async deleteAlbum(userId: string, albumId: string) {
+    await this.checkAbilityToManage(userId, albumId);
+
+    await this.albumRepository.delete(albumId);
+  }
+
   public async deleteMedia(
     albumId: string,
     userId: string,
@@ -47,8 +53,8 @@ export class AlbumService {
   }
 
   public async uploadMedia(
-    albumId: string,
     userId: string,
+    albumId: string,
     dto: AlbumUploadMediaRequestDto,
   ): Promise<void> {
     const album = await this.checkAbilityToManage(userId, albumId);
