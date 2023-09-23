@@ -9,6 +9,7 @@ import { AlbumModule } from './modules/album/album.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { HealthModule } from './modules/health/health.module';
 import { MediaModule } from './modules/media/media.module';
+import { RepositoryModule } from './modules/repository/repository.module';
 import { UserModule } from './modules/user/user.module';
 
 @Module({
@@ -20,6 +21,7 @@ import { UserModule } from './modules/user/user.module';
     MediaModule,
     UserModule,
     HealthModule,
+    RepositoryModule,
     AlbumModule,
   ],
   providers: [AppGateway],

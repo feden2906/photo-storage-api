@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 
 import { AlbumEntity } from '../../../database';
-import { AlbumCreateRequestDto } from '../models/dtos/request';
+import { AlbumCreateRequestDto } from '../../album/models/dtos/request';
 
 @Injectable()
 export class AlbumRepository extends Repository<AlbumEntity> {
@@ -40,9 +40,7 @@ export class AlbumRepository extends Repository<AlbumEntity> {
         id: albumId,
         album_owner: { id: userId },
       },
-      relations: {
-        media: true,
-      },
+      relations: ['media_to_albums.media'],
     });
   }
 

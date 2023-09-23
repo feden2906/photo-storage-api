@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { UserEntity } from '../../../database';
-import { MediaRepository } from '../../media/services/media.repository';
+import { MediaRepository } from '../../repository/services/media.repository';
 import { StorageService } from '../../storage/services/storage.service';
 import { UserRepository } from './user.repository';
 
@@ -10,7 +10,7 @@ export class UserService {
   constructor(
     private storageService: StorageService,
     private userRepository: UserRepository,
-    private imageRepository: MediaRepository,
+    private mediaRepository: MediaRepository,
   ) {}
 
   public async currentUser(userId: string): Promise<UserEntity> {
@@ -20,7 +20,7 @@ export class UserService {
   }
 
   public async deleteUser(userId: string): Promise<void> {
-    const images = await this.imageRepository.findUrlsBy({
+    const images = await this.mediaRepository.findUrlsBy({
       user: { id: userId },
     });
     await Promise.all([

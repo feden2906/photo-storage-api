@@ -1,16 +1,25 @@
-import { Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 
 import { AlbumEntity } from './album.entity';
 import { MediaEntity } from './media.entity';
 
 @Entity('media_to_albums')
 export class MediaToAlbumsEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryColumn()
+  albumId: string;
 
-  @ManyToOne(() => AlbumEntity, (entity) => entity.media_to_albums)
+  @PrimaryColumn()
+  mediaId: string;
+
+  @ManyToOne(() => AlbumEntity, (entity) => entity.media_to_albums, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'albumId' })
   album: AlbumEntity;
 
-  @ManyToOne(() => MediaEntity, (entity) => entity.media_to_albums)
+  @ManyToOne(() => MediaEntity, (entity) => entity.media_to_albums, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'mediaId' })
   media: MediaEntity;
 }

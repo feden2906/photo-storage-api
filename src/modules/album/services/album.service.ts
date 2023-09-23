@@ -6,17 +6,19 @@ import {
   NoPermissionException,
 } from '../../../common/http';
 import { AlbumEntity } from '../../../database';
-import { MediaRepository } from '../../media/services/media.repository';
 import { MediaService } from '../../media/services/media.service';
+import { AlbumRepository } from '../../repository/services/album.repository';
+import { MediaRepository } from '../../repository/services/media.repository';
+import { MediaToAlbumsRepository } from '../../repository/services/media_to_albums.repository';
 import {
   AlbumCreateRequestDto,
   MediaRemoveFromAlbumRequestDto,
 } from '../models/dtos/request';
-import { AlbumRepository } from './album.repository';
 
 @Injectable()
 export class AlbumService {
   constructor(
+    private mediaToAlbumsRepository: MediaToAlbumsRepository,
     private albumRepository: AlbumRepository,
     private mediaService: MediaService,
     private mediaRepository: MediaRepository,
@@ -39,31 +41,6 @@ export class AlbumService {
     await this.albumRepository.delete(albumId);
   }
 
-  public async removeMedia(
-    albumId: string,
-    userId: string,
-    dto: MediaRemoveFromAlbumRequestDto,
-  ): Promise<void> {
-    const { mediaIds } = dto;
-
-    const album = await this.checkAbilityToManage(userId, albumId);
-
-    const mediaEntities = await this.mediaRepository.findBy({
-      user: { id: userId },
-      id: In(mediaIds),
-    });
-
-    if (mediaEntities.length !== mediaIds.length) {
-      throw new ForbiddenException();
-    }
-
-    for (const mediaId of mediaIds) {
-      album.media = album.media.filter((image) => image.id !== mediaId);
-    }
-
-    await this.albumRepository.save(album);
-  }
-
   public async addMedia(
     userId: string,
     albumId: string,
@@ -71,26 +48,41 @@ export class AlbumService {
   ): Promise<void> {
     const album = await this.checkAbilityToManage(userId, albumId);
 
-    // for (const mediaId of dto.mediaIds) {
-    //   const media = await this.mediaService.checkAbilityToManage(
-    //     userId,
-    //     mediaId,
-    //   );
-    //   album.media.push(media);
-    // }
+    const mediaList = await this.mediaRepository.findManyByIdsAndOwner(
+      userId,
+      dto.mediaIds,
+    );
 
-    const mediaEntities = await this.mediaRepository.findBy({
-      user: { id: userId },
-      id: In(dto.mediaIds),
-    });
-
-    if (mediaEntities.length !== dto.mediaIds.length) {
+    if (mediaList.length !== dto.mediaIds.length) {
       throw new ForbiddenException();
     }
 
-    album.media.push(...mediaEntities);
+    const mediaToAlbums = mediaList.map((media) => ({ album, media }));
 
-    await this.albumRepository.save(album);
+    await this.mediaToAlbumsRepository.save(mediaToAlbums);
+  }
+
+  public async removeMedia(
+    albumId: string,
+    userId: string,
+    dto: MediaRemoveFromAlbumRequestDto,
+  ): Promise<void> {
+    await this.checkAbilityToManage(userId, albumId);
+
+    const mediaList =
+      await this.mediaToAlbumsRepository.findManyByUserAndAlbumAndMedia(
+        userId,
+        albumId,
+        dto.mediaIds,
+      );
+
+    if (mediaList.length !== dto.mediaIds.length) {
+      throw new ForbiddenException();
+    }
+
+    await this.mediaToAlbumsRepository.delete({
+      media: { id: In(dto.mediaIds) },
+    });
   }
 
   private async checkAbilityToManage(

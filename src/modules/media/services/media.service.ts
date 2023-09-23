@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 
 import {
   EntityNotFoundException,
@@ -6,10 +6,10 @@ import {
 } from '../../../common/http';
 import { ListEntityType } from '../../../common/types';
 import { MediaEntity } from '../../../database';
+import { MediaRepository } from '../../repository/services/media.repository';
 import { FilesNotExistException } from '../../storage/exceptions/files-not-exist.exception';
 import { StorageService } from '../../storage/services/storage.service';
 import { MediaListQueryDto } from '../models/dtos/request';
-import { MediaRepository } from './media.repository';
 
 @Injectable()
 export class MediaService {
@@ -75,5 +75,16 @@ export class MediaService {
     if (!isExist) throw new EntityNotFoundException();
     if (isExist && !media) throw new NoPermissionException();
     return media;
+  }
+
+  public async check(userId: string, mediaIds: string[]) {
+    const mediaList = await this.mediaRepository.findManyByIdsAndOwner(
+      userId,
+      mediaIds,
+    );
+    if (mediaList.length !== mediaIds.length) {
+      throw new ForbiddenException();
+    }
+    return mediaIds;
   }
 }

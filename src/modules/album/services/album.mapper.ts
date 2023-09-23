@@ -1,5 +1,5 @@
 import { AlbumEntity } from '../../../database';
-import { AlbumResponseDto } from '../models/dtos/response/album.response.dto';
+import { AlbumResponseDto } from '../models/dtos/response';
 
 export class AlbumMapper {
   static toResponse(entity: AlbumEntity): AlbumResponseDto {
@@ -10,5 +10,9 @@ export class AlbumMapper {
       created: entity.created,
       updated: entity.updated,
     };
+  }
+
+  static toManyResponse(entities: AlbumEntity[]): AlbumResponseDto[] {
+    return entities.map(this.toResponse);
   }
 }

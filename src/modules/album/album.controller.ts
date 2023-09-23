@@ -13,6 +13,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CurrentUser } from '../../common/decorators';
 import { IUserData } from '../../common/models';
+import { media } from '../media/models/constants';
 import { AlbumId } from './models/constants';
 import {
   AlbumCreateRequestDto,
@@ -31,8 +32,11 @@ export class AlbumController {
 
   @ApiOperation({ description: 'Get a list of albums' })
   @Get()
-  public async getAlbumList(@CurrentUser() user: IUserData) {
-    return await this.albumService.getListAlbum(user.userId);
+  public async getAlbumList(
+    @CurrentUser() user: IUserData,
+  ): Promise<AlbumResponseDto[]> {
+    const albumList = await this.albumService.getListAlbum(user.userId);
+    return AlbumMapper.toManyResponse(albumList);
   }
   @ApiOperation({ description: 'Creating an album' })
   @Post()
@@ -57,10 +61,10 @@ export class AlbumController {
   }
 
   @ApiOperation({
-    description: 'Uploading media files to an album',
+    description: 'Adding media to an album',
   })
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Post(`media/:${AlbumId}`)
+  @Post(`:${AlbumId}/${media}`)
   public async addMedia(
     @Param(AlbumId, ParseUUIDPipe) albumId: string,
     @Body() dto: MediaAddToAlbumRequestDto,
@@ -70,10 +74,10 @@ export class AlbumController {
   }
 
   @ApiOperation({
-    description: 'Removing media files from album',
+    description: 'Removing media from album',
   })
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Delete(`media/:${AlbumId}`)
+  @Delete(`:${AlbumId}/${media}`)
   public async removeMedia(
     @Param(AlbumId, ParseUUIDPipe) albumId: string,
     @Body() dto: MediaRemoveFromAlbumRequestDto,
