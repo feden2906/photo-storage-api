@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppGateway } from './app.gateway';
 import { AppConfigModule } from './config/app/config.module';
-import { PostgresqlConfigModule } from './config/database/config.module';
 import { typeOrmConfig } from './config/database/type-orm-configuration';
 import { AlbumModule } from './modules/album/album.module';
 import { AuthModule } from './modules/auth/auth.module';
@@ -14,7 +13,6 @@ import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
-    PostgresqlConfigModule,
     AppConfigModule,
     TypeOrmModule.forRootAsync(typeOrmConfig),
     AuthModule,

@@ -1,14 +1,12 @@
 import { Module } from '@nestjs/common';
 
-import { MediaModule } from '../media/media.module';
 import { StorageModule } from '../storage/storage.module';
-import { UserRepository } from './services/user.repository';
 import { UserService } from './services/user.service';
 import { UserController } from './user.controller';
 
 @Module({
-  imports: [MediaModule, StorageModule],
+  imports: [StorageModule],
   controllers: [UserController],
-  providers: [UserService, UserRepository],
+  providers: [UserService],
 })
 export class UserModule {}

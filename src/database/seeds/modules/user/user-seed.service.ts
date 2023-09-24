@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { UserRepository } from '../../../../modules/user/services/user.repository';
+import { UserRepository } from '../../../../modules/repository/services/user.repository';
 import { readSeedFile } from '../../helpers/read-seed-file';
 import { SeedLogger } from '../../helpers/seed-logger';
 import { IUserSeed } from './user-seed.interface';

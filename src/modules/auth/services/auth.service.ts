@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import { UserRepository } from '../../repository/services/user.repository';
 import { UserCreateRequestDto } from '../../user/models/dtos/request';
 import { UserMapper } from '../../user/services/user.mapper';
-import { UserRepository } from '../../user/services/user.repository';
 import { LoginResponseDto } from '../models/dtos/response';
 import { TokenService } from './token.service';
 

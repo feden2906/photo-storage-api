@@ -7,7 +7,7 @@ import {
   RefreshTokenExpiredException,
 } from '../../../common/http';
 import { AuthConfigService } from '../../../config/auth/configuration.service';
-import { UserRepository } from '../../user/services/user.repository';
+import { UserRepository } from '../../repository/services/user.repository';
 import { JwtPayload, TokenError, TokenType } from '../models';
 import { TokenResponseDto } from '../models/dtos/response';
 

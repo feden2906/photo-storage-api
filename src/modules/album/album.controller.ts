@@ -13,12 +13,12 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CurrentUser } from '../../common/decorators';
 import { IUserData } from '../../common/models';
-import { media } from '../media/models/constants';
+import { mediaId } from '../media/models/constants';
 import { AlbumId } from './models/constants';
 import {
   AlbumCreateRequestDto,
-  MediaAddToAlbumRequestDto,
-  MediaRemoveFromAlbumRequestDto,
+  AttachMediaToAlbumRequestDto,
+  DetachMediaFromAlbumRequestDto,
 } from './models/dtos/request';
 import { AlbumResponseDto } from './models/dtos/response';
 import { AlbumMapper } from './services/album.mapper';
@@ -56,7 +56,7 @@ export class AlbumController {
   public async deleteAlbum(
     @CurrentUser() user: IUserData,
     @Param(AlbumId, ParseUUIDPipe) albumId: string,
-  ) {
+  ): Promise<void> {
     await this.albumService.deleteAlbum(user.userId, albumId);
   }
 
@@ -64,12 +64,12 @@ export class AlbumController {
     description: 'Adding media to an album',
   })
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Post(`:${AlbumId}/${media}`)
+  @Post(`:${AlbumId}/media`)
   public async addMedia(
     @Param(AlbumId, ParseUUIDPipe) albumId: string,
-    @Body() dto: MediaAddToAlbumRequestDto,
+    @Body() dto: AttachMediaToAlbumRequestDto,
     @CurrentUser() user: IUserData,
-  ) {
+  ): Promise<void> {
     await this.albumService.addMedia(user.userId, albumId, dto);
   }
 
@@ -77,12 +77,12 @@ export class AlbumController {
     description: 'Removing media from album',
   })
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Delete(`:${AlbumId}/${media}`)
-  public async removeMedia(
+  @Delete(`:${AlbumId}/media/:${mediaId}`)
+  public async detachMedia(
     @Param(AlbumId, ParseUUIDPipe) albumId: string,
-    @Body() dto: MediaRemoveFromAlbumRequestDto,
+    @Body() dto: DetachMediaFromAlbumRequestDto,
     @CurrentUser() user: IUserData,
-  ) {
-    await this.albumService.removeMedia(albumId, user.userId, dto);
+  ): Promise<void> {
+    await this.albumService.detachMedia(albumId, user.userId, dto);
   }
 }

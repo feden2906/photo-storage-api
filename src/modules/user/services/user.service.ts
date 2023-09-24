@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { UserEntity } from '../../../database';
 import { MediaRepository } from '../../repository/services/media.repository';
+import { UserRepository } from '../../repository/services/user.repository';
 import { StorageService } from '../../storage/services/storage.service';
-import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UserService {

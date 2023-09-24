@@ -12,7 +12,7 @@ import { MediaRepository } from '../../repository/services/media.repository';
 import { MediaToAlbumsRepository } from '../../repository/services/media_to_albums.repository';
 import {
   AlbumCreateRequestDto,
-  MediaRemoveFromAlbumRequestDto,
+  DetachMediaFromAlbumRequestDto,
 } from '../models/dtos/request';
 
 @Injectable()
@@ -44,7 +44,7 @@ export class AlbumService {
   public async addMedia(
     userId: string,
     albumId: string,
-    dto: MediaRemoveFromAlbumRequestDto,
+    dto: DetachMediaFromAlbumRequestDto,
   ): Promise<void> {
     const album = await this.checkAbilityToManage(userId, albumId);
 
@@ -62,10 +62,10 @@ export class AlbumService {
     await this.mediaToAlbumsRepository.save(mediaToAlbums);
   }
 
-  public async removeMedia(
+  public async detachMedia(
     albumId: string,
     userId: string,
-    dto: MediaRemoveFromAlbumRequestDto,
+    dto: DetachMediaFromAlbumRequestDto,
   ): Promise<void> {
     await this.checkAbilityToManage(userId, albumId);
 
