@@ -1,4 +1,5 @@
 {
+   "include": ["src/**/*", "**/*.json"],
    "compilerOptions": {
       "lib": [
          "ESNext"
@@ -8,7 +9,7 @@
       "module": "commonjs",
       "strict": false,
       "moduleResolution": "node",
-      "outDir": "./dist",
+      "outDir": "./dist/src",
       "emitDecoratorMetadata": true,
       "experimentalDecorators": true,
       "sourceMap": true,

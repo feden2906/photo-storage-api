@@ -7,7 +7,7 @@
       "@nestjs/swagger"
     ],
     "assets": [
-      "**/*.ejs"
+      "**/common/http/i18n/constants/**/*.json"
     ]
   }
 }

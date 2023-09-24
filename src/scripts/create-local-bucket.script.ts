@@ -29,4 +29,4 @@ async function createBucket() {
   }
 }
 
-createBucket().then();
+void createBucket();

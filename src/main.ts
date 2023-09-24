@@ -5,6 +5,7 @@ import * as compression from 'compression';
 
 import { AppModule } from './app.module';
 import { SwaggerHelper } from './common/helpers';
+import { TranslationHelper } from './common/helpers/translation.helper';
 import { GlobalExceptionFilter } from './common/http';
 import { AppConfigService } from './config/app/configuration.service';
 
@@ -69,6 +70,8 @@ async function bootstrap() {
     Logger.log(`Server is running ${url}`);
     Logger.log(`Swagger is running ${url}/docs`);
   });
+
+  await TranslationHelper.compareKeys();
 }
 
 void bootstrap();
