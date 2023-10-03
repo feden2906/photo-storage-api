@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, FindOptionsWhere, Repository } from 'typeorm';
+import { DataSource, FindOptionsWhere, In, Repository } from 'typeorm';
 
 import { ListEntityType } from '../../../common/types';
 import { MediaEntity } from '../../../database';
-import { MediaListQueryDto } from '../models/dtos/request';
-import { MediaSortFieldEnum } from '../models/enums';
+import { MediaListQueryDto } from '../../media/models/dtos/request';
+import { MediaSortFieldEnum } from '../../media/models/enums';
 
 @Injectable()
 export class MediaRepository extends Repository<MediaEntity> {
@@ -63,6 +63,16 @@ export class MediaRepository extends Repository<MediaEntity> {
     return await this.findOneBy({
       id: mediaId,
       user: { id: userId },
+    });
+  }
+
+  public async findManyByIdsAndOwner(
+    userId: string,
+    mediaIds: string[],
+  ): Promise<MediaEntity[]> {
+    return await this.findBy({
+      user: { id: userId },
+      id: In(mediaIds),
     });
   }
 

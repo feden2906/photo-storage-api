@@ -40,7 +40,7 @@ export class UserEntity extends CreatedUpdatedDateModel {
   password?: string;
 
   @OneToMany(() => MediaEntity, (entity) => entity.user, { nullable: true })
-  images?: MediaEntity[];
+  media?: MediaEntity[];
 
   @OneToMany(() => AlbumEntity, (entity) => entity.album_owner, {
     nullable: true,

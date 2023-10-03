@@ -17,14 +17,15 @@
     "migration:run": "npm run typeorm -- migration:run",
     "prepare": "husky install",
     "seed:run": "ts-node ./src/database/seeds/run-seed.ts",
-    "start": "nest start",
-    "start:db": "sudo docker compose -f docker-compose.db.yml up",
-    "start:debug": "nest start --debug --watch",
-    "start:dev": "NODE_ENV=development nest start --watch",
+    "generatefiles": "ts-node src/scripts/create-generated-files.script.ts",
+    "start": "npm run generatefiles && nest start",
+    "start:db": "docker compose -f docker-compose.db.yml up",
+    "start:debug": "npm run generatefiles && nest start --debug --watch",
+    "start:dev": "npm run generatefiles && NODE_ENV=development nest start --watch",
     "prestart:prod": "npm run migration:run",
-    "start:prod": "NODE_ENV=production node dist/src/main",
-    "start:test": "NODE_ENV=test nest start --watch",
-    "start:watch": "nest start --watch",
+    "start:prod": "npm run generatefiles && NODE_ENV=production node dist/src/main",
+    "start:test": "npm run generatefiles && NODE_ENV=test nest start --watch",
+    "start:watch": "npm run generatefiles && nest start --watch",
     "test": "cross-env NODE_ENV=test npm run test:e2e",
     "test:e2e": "chmod +x test/test.sh && test/test.sh",
     "typeorm": "typeorm-ts-node-commonjs --dataSource ./ormconfig.js"
@@ -54,6 +55,7 @@
     "ejs": "^3.1.9",
     "ms": "^2.1.3",
     "multer-s3": "^3.0.1",
+    "nestjs-i18n": "^10.3.5",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "pg": "^8.11.3",
@@ -64,6 +66,9 @@
     "ts-node": "^10.9.1",
     "typeorm": "^0.3.17",
     "uuid": "^9.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0 <21.0.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.1.17",
