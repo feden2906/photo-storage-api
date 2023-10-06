@@ -1,4 +1,5 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
+import * as CombinedStream from 'combined-stream';
 
 import {
   EntityNotFoundException,
@@ -22,6 +23,20 @@ export class MediaService {
     query: MediaListQueryDto,
   ): Promise<ListEntityType<MediaEntity>> {
     return await this.mediaRepository.getMediaList(query);
+  }
+
+  public async getMediaStreams(
+    query: MediaListQueryDto,
+  ): Promise<CombinedStream> {
+    const combinedStream = CombinedStream.create();
+
+    const { data: mediaList } = await this.mediaRepository.getMediaList(query);
+
+    for (const media of mediaList) {
+      combinedStream.append(await this.storageService.getFile(media.url));
+    }
+
+    return combinedStream;
   }
 
   public async uploadMediaFiles(
