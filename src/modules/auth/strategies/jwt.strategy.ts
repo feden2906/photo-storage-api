@@ -5,8 +5,8 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { InvalidCredentialsException } from '../../../common/http';
 import { IUserData } from '../../../common/models';
 import { AuthConfigService } from '../../../config/auth/configuration.service';
+import { UserRepository } from '../../repository/services/user.repository';
 import { UserMapper } from '../../user/services/user.mapper';
-import { UserRepository } from '../../user/services/user.repository';
 import { JwtPayload } from '../models';
 
 @Injectable()

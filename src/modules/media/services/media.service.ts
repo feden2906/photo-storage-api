@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 
 import {
   EntityNotFoundException,
@@ -6,6 +6,7 @@ import {
 } from '../../../common/http';
 import { ListEntityType } from '../../../common/types';
 import { MediaEntity } from '../../../database';
+import { MediaRepository } from '../../repository/services/media.repository';
 import { FilesNotExistException } from '../../storage/exceptions/files-not-exist.exception';
 import { StorageService } from '../../storage/services/storage.service';
 import { MediaListQueryDto } from '../models/dtos/request';
@@ -79,16 +80,27 @@ export class MediaService {
     ]);
   }
 
-  private async checkAbilityToManage(
+  public async checkAbilityToManage(
     userId: string,
-    imageId: string,
+    mediaId: string,
   ): Promise<MediaEntity> {
-    const [isExist, image] = await Promise.all([
-      this.mediaRepository.isExist(imageId),
-      this.mediaRepository.findOneByIdAndOwner(userId, imageId),
+    const [isExist, media] = await Promise.all([
+      this.mediaRepository.isExist(mediaId),
+      this.mediaRepository.findOneByIdAndOwner(userId, mediaId),
     ]);
     if (!isExist) throw new EntityNotFoundException();
-    if (isExist && !image) throw new NoPermissionException();
-    return image;
+    if (isExist && !media) throw new NoPermissionException();
+    return media;
+  }
+
+  public async check(userId: string, mediaIds: string[]) {
+    const mediaList = await this.mediaRepository.findManyByIdsAndOwner(
+      userId,
+      mediaIds,
+    );
+    if (mediaList.length !== mediaIds.length) {
+      throw new ForbiddenException();
+    }
+    return mediaIds;
   }
 }
