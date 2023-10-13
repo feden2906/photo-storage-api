@@ -40,7 +40,7 @@ export class AlbumRepository extends Repository<AlbumEntity> {
         id: albumId,
         album_owner: { id: userId },
       },
-      relations: ['media_to_albums.media'],
+      relations: { title_image: true },
     });
   }
 

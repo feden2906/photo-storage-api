@@ -13,7 +13,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CurrentUser } from '../../common/decorators';
 import { IUserData } from '../../common/models';
-import { mediaId } from '../media/models/constants';
+import { MediaId } from '../media/models/constants';
 import { AlbumId } from './models/constants';
 import {
   AlbumCreateRequestDto,
@@ -61,28 +61,53 @@ export class AlbumController {
   }
 
   @ApiOperation({
-    description: 'Adding media to an album',
+    description: 'Attaching media to an album',
   })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post(`:${AlbumId}/media`)
-  public async addMedia(
+  public async attachMedia(
     @Param(AlbumId, ParseUUIDPipe) albumId: string,
     @Body() dto: AttachMediaToAlbumRequestDto,
     @CurrentUser() user: IUserData,
   ): Promise<void> {
-    await this.albumService.addMedia(user.userId, albumId, dto);
+    await this.albumService.attachMedia(user.userId, albumId, dto);
   }
 
   @ApiOperation({
-    description: 'Removing media from album',
+    description: 'Detaching media from album',
   })
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Delete(`:${AlbumId}/media/:${mediaId}`)
+  @Delete(`:${AlbumId}/media`)
   public async detachMedia(
     @Param(AlbumId, ParseUUIDPipe) albumId: string,
     @Body() dto: DetachMediaFromAlbumRequestDto,
     @CurrentUser() user: IUserData,
   ): Promise<void> {
     await this.albumService.detachMedia(albumId, user.userId, dto);
+  }
+
+  @ApiOperation({
+    description: 'Attaching title image to an album',
+  })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Post(`${AlbumId}/title_image/:${MediaId}`)
+  public async attachTitleImage(
+    @Param(AlbumId, ParseUUIDPipe) albumId: string,
+    @Param(MediaId, ParseUUIDPipe) mediaId: string,
+    @CurrentUser() user: IUserData,
+  ) {
+    await this.albumService.attachTitleImage(user.userId, albumId, mediaId);
+  }
+
+  @ApiOperation({
+    description: 'Detaching title image to an album',
+  })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Post(`${AlbumId}/title_image`)
+  public async detachTitleImage(
+    @Param(AlbumId, ParseUUIDPipe) albumId: string,
+    @CurrentUser() user: IUserData,
+  ) {
+    await this.albumService.detachTitleImage(user.userId, albumId);
   }
 }
