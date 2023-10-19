@@ -10,18 +10,25 @@ import { MediaService } from '../../media/services/media.service';
 import { AlbumRepository } from '../../repository/services/album.repository';
 import { MediaRepository } from '../../repository/services/media.repository';
 import { MediaToAlbumsRepository } from '../../repository/services/media_to_albums.repository';
+import { RoleRepository } from '../../repository/services/role.repository';
+import { UserRepository } from '../../repository/services/user.repository';
+import { UserToAlbumsRepository } from '../../repository/services/user_to_albums.repository';
 import {
   AlbumCreateRequestDto,
   DetachMediaFromAlbumRequestDto,
 } from '../models/dtos/request';
+import { AddMemberRequestDto } from '../models/dtos/request/add-member.request.dto';
 
 @Injectable()
 export class AlbumService {
   constructor(
-    private mediaToAlbumsRepository: MediaToAlbumsRepository,
-    private albumRepository: AlbumRepository,
     private mediaService: MediaService,
+    private userRepository: UserRepository,
+    private mediaToAlbumsRepository: MediaToAlbumsRepository,
+    private userToAlbumsRepository: UserToAlbumsRepository,
+    private albumRepository: AlbumRepository,
     private mediaRepository: MediaRepository,
+    private roleRepository: RoleRepository,
   ) {}
 
   public async getListAlbum(userId: string): Promise<AlbumEntity[]> {
@@ -83,6 +90,29 @@ export class AlbumService {
     await this.mediaToAlbumsRepository.delete({
       media: { id: In(dto.mediaIds) },
     });
+  }
+
+  public async addMember(
+    albumId: string,
+    userId: string,
+    dto: AddMemberRequestDto,
+  ): Promise<void> {
+    if (userId === dto.memberId) throw new ForbiddenException();
+
+    const album = await this.checkAbilityToManage(userId, albumId);
+
+    const member = await this.userRepository.findOneOrFail({
+      where: { id: dto.memberId },
+    });
+
+    await Promise.all([
+      await this.roleRepository.save({
+        album,
+        user: member,
+        roles: [...dto.role],
+      }),
+      await this.userToAlbumsRepository.save({ album, user: member }),
+    ]);
   }
 
   private async checkAbilityToManage(

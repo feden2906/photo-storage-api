@@ -1,11 +1,4 @@
-import {
-  Column,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import {
   lowerCaseTransformer,
@@ -14,10 +7,13 @@ import {
 import { CreatedUpdatedDateModel } from './_created-updated-date.model';
 import { AlbumEntity } from './album.entity';
 import { MediaEntity } from './media.entity';
+import { RoleEntity } from './role.entity';
+import { UserToAlbumsEntity } from './user_to_albums.entity';
 
 @Entity('user')
 export class UserEntity extends CreatedUpdatedDateModel {
-  @PrimaryGeneratedColumn('uuid') id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column('text', { nullable: false })
   firstName: string;
@@ -42,14 +38,14 @@ export class UserEntity extends CreatedUpdatedDateModel {
   @OneToMany(() => MediaEntity, (entity) => entity.user, { nullable: true })
   media?: MediaEntity[];
 
+  @OneToMany(() => RoleEntity, (entity) => entity.user)
+  roles: RoleEntity[];
+
   @OneToMany(() => AlbumEntity, (entity) => entity.album_owner, {
     nullable: true,
   })
   own_albums?: AlbumEntity[];
 
-  @ManyToMany(() => AlbumEntity, (entity) => entity.album_viewers, {
-    nullable: true,
-  })
-  @JoinTable()
-  side_albums?: AlbumEntity[];
+  @OneToMany(() => UserToAlbumsEntity, (entity) => entity.user)
+  user_to_albums?: UserToAlbumsEntity[];
 }

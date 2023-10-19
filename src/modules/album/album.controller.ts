@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -20,6 +21,7 @@ import {
   AttachMediaToAlbumRequestDto,
   DetachMediaFromAlbumRequestDto,
 } from './models/dtos/request';
+import { AddMemberRequestDto } from './models/dtos/request/add-member.request.dto';
 import { AlbumResponseDto } from './models/dtos/response';
 import { AlbumMapper } from './services/album.mapper';
 import { AlbumService } from './services/album.service';
@@ -84,5 +86,18 @@ export class AlbumController {
     @CurrentUser() user: IUserData,
   ): Promise<void> {
     await this.albumService.detachMedia(albumId, user.userId, dto);
+  }
+
+  @ApiOperation({
+    description: 'Add member to album',
+  })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Patch(`:${AlbumId}/member`)
+  public async addMember(
+    @Param(AlbumId, ParseUUIDPipe) albumId: string,
+    @Body() dto: AddMemberRequestDto,
+    @CurrentUser() user: IUserData,
+  ) {
+    await this.albumService.addMember(user.userId, albumId, dto);
   }
 }
