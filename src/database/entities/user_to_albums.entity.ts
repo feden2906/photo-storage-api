@@ -20,6 +20,6 @@ export class UserToAlbumsEntity {
   @ManyToOne(() => UserEntity, (entity) => entity.user_to_albums, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'mediaId' })
+  @JoinColumn({ name: 'userId' })
   user: UserEntity;
 }

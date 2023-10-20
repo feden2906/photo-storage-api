@@ -35,10 +35,25 @@ export class AlbumService {
     return await this.albumRepository.findManyByOwnerId(userId);
   }
 
+  public async getAlbumById(
+    userId: string,
+    albumId: string,
+  ): Promise<AlbumEntity> {
+    return await this.checkAbilityToManage(userId, albumId);
+  }
+
   public async createAlbum(
     dto: AlbumCreateRequestDto,
     userId: string,
   ): Promise<AlbumEntity> {
+    const album = await this.albumRepository.createAlbum(dto, userId);
+
+    await this.roleRepository.save({
+      album,
+      user: { id: userId },
+      roles: ['Owner'],
+    });
+
     return await this.albumRepository.createAlbum(dto, userId);
   }
 
@@ -93,8 +108,8 @@ export class AlbumService {
   }
 
   public async addMember(
-    albumId: string,
     userId: string,
+    albumId: string,
     dto: AddMemberRequestDto,
   ): Promise<void> {
     if (userId === dto.memberId) throw new ForbiddenException();
@@ -109,7 +124,7 @@ export class AlbumService {
       await this.roleRepository.save({
         album,
         user: member,
-        roles: [...dto.role],
+        roles: [dto.role],
       }),
       await this.userToAlbumsRepository.save({ album, user: member }),
     ]);

@@ -23,6 +23,7 @@ import {
 } from './models/dtos/request';
 import { AddMemberRequestDto } from './models/dtos/request/add-member.request.dto';
 import { AlbumResponseDto } from './models/dtos/response';
+import { AlbumWithMediaResponseDto } from './models/dtos/response/album-with-media.response.dto';
 import { AlbumMapper } from './services/album.mapper';
 import { AlbumService } from './services/album.service';
 
@@ -40,6 +41,16 @@ export class AlbumController {
     const albumList = await this.albumService.getListAlbum(user.userId);
     return AlbumMapper.toManyResponse(albumList);
   }
+
+  @ApiOperation({ description: 'Get a album with media' })
+  @Get(`:${AlbumId}`)
+  public async getAlbumById(
+    @Param(AlbumId, ParseUUIDPipe) albumId: string,
+    @CurrentUser() user: IUserData,
+  ): Promise<AlbumWithMediaResponseDto> {
+    const album = await this.albumService.getAlbumById(user.userId, albumId);
+    return AlbumMapper.toResponseWithMedia(album);
+  }
   @ApiOperation({ description: 'Creating an album' })
   @Post()
   public async createAlbum(
@@ -56,8 +67,8 @@ export class AlbumController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(`:${AlbumId}`)
   public async deleteAlbum(
-    @CurrentUser() user: IUserData,
     @Param(AlbumId, ParseUUIDPipe) albumId: string,
+    @CurrentUser() user: IUserData,
   ): Promise<void> {
     await this.albumService.deleteAlbum(user.userId, albumId);
   }
