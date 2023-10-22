@@ -9,6 +9,9 @@ export class AlbumMapper {
       id: entity.id,
       name: entity.name,
       album_owner: entity.album_owner,
+      title_image: entity.title_image
+        ? MediaMapper.toResponseListItemDto(entity.title_image)
+        : null,
       created: entity.created,
       updated: entity.updated,
     };

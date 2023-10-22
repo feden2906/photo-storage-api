@@ -10,19 +10,25 @@ import {
   Res,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Response } from 'express';
 
-import { CurrentUser, MediaPaths, SkipAuth } from '../../common/decorators';
+import { CurrentUser, MediaPaths } from '../../common/decorators';
 import { IUserData } from '../../common/models';
 import { LocalFilesInterceptor } from '../storage/file.interceptor';
-import { ImageId } from './models/constants';
+import { MediaId } from './models/constants';
 import { MediaListQueryDto } from './models/dtos/request';
 import { MediaListResponseDto } from './models/dtos/response';
 import { MediaMapper } from './services/media.mapper';
 import { MediaService } from './services/media.service';
 
-@SkipAuth()
+@ApiBearerAuth()
 @ApiTags('Media')
 @Controller({ path: 'media', version: '1' })
 export class MediaController {
@@ -77,10 +83,10 @@ export class MediaController {
 
   @ApiOperation({ description: 'Delete video or image' })
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Delete(`:${ImageId}`)
-  public async deleteImage(
+  @Delete(`:${MediaId}`)
+  public async deleteMedia(
     @CurrentUser() user: IUserData,
-    @Param(ImageId) imageId: string,
+    @Param(MediaId) imageId: string,
   ): Promise<void> {
     await this.imageService.deleteMedia(user.userId, imageId);
   }

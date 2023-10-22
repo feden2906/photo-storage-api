@@ -63,7 +63,7 @@ export class AlbumService {
     await this.albumRepository.delete(albumId);
   }
 
-  public async addMedia(
+  public async attachMedia(
     userId: string,
     albumId: string,
     dto: DetachMediaFromAlbumRequestDto,
@@ -79,6 +79,17 @@ export class AlbumService {
       throw new ForbiddenException();
     }
 
+    if (!album.title_image) {
+      const title_image = mediaList.find(
+        (media) => media.id === dto.mediaIds[0],
+      );
+
+      await this.albumRepository.save({
+        id: albumId,
+        title_image,
+      });
+    }
+
     const mediaToAlbums = mediaList.map((media) => ({ album, media }));
 
     await this.mediaToAlbumsRepository.save(mediaToAlbums);
@@ -89,7 +100,18 @@ export class AlbumService {
     userId: string,
     dto: DetachMediaFromAlbumRequestDto,
   ): Promise<void> {
-    await this.checkAbilityToManage(userId, albumId);
+    const album = await this.checkAbilityToManage(userId, albumId);
+
+    if (dto.mediaIds.includes(album.title_image?.id)) {
+      const media = await this.mediaRepository.findOneByMediaIdsNotInAndAlbumId(
+        dto.mediaIds,
+        albumId,
+      );
+
+      if (!media) {
+        await this.albumRepository.save({ id: albumId, title_image: null });
+      }
+    }
 
     const mediaList =
       await this.mediaToAlbumsRepository.findManyByUserAndAlbumAndMedia(
@@ -105,6 +127,30 @@ export class AlbumService {
     await this.mediaToAlbumsRepository.delete({
       media: { id: In(dto.mediaIds) },
     });
+  }
+
+  public async attachTitleImage(
+    userId: string,
+    albumId: string,
+    mediaId: string,
+  ) {
+    await this.checkAbilityToManage(userId, albumId);
+
+    const media = await this.mediaRepository.findOneByIdAndOwnerIdAndAlbumId(
+      mediaId,
+      userId,
+      albumId,
+    );
+
+    if (!media) throw new NoPermissionException();
+
+    await this.albumRepository.save({ id: albumId, title_image: media });
+  }
+
+  public async detachTitleImage(userId: string, albumId: string) {
+    await this.checkAbilityToManage(userId, albumId);
+
+    await this.albumRepository.save({ id: albumId, title_image: null });
   }
 
   public async addMember(

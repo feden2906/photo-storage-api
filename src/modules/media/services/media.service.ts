@@ -1,4 +1,5 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
+import CombinedStream from 'combined-stream';
 
 import {
   EntityNotFoundException,
@@ -10,7 +11,6 @@ import { MediaRepository } from '../../repository/services/media.repository';
 import { FilesNotExistException } from '../../storage/exceptions/files-not-exist.exception';
 import { StorageService } from '../../storage/services/storage.service';
 import { MediaListQueryDto } from '../models/dtos/request';
-import CombinedStream = require('combined-stream');
 
 @Injectable()
 export class MediaService {
