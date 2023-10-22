@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, FindOptionsWhere, In, Repository } from 'typeorm';
+import { DataSource, FindOptionsWhere, In, Not, Repository } from 'typeorm';
 
 import { ListEntityType } from '../../../common/types';
 import { MediaEntity } from '../../../database';
@@ -31,6 +31,18 @@ export class MediaRepository extends Repository<MediaEntity> {
     return { data, total };
   }
 
+  public async findOneByMediaIdsNotInAndAlbumId(
+    mediaIds: string[],
+    albumId: string,
+  ) {
+    return await this.findOneBy({
+      media_to_albums: {
+        albumId,
+      },
+      id: Not(In(mediaIds)),
+    });
+  }
+
   // public async createImage(
   //   userId: string,
   //   dto: BaseMediaRequestDto,
@@ -53,6 +65,20 @@ export class MediaRepository extends Repository<MediaEntity> {
   public async isExist(mediaId: string): Promise<boolean> {
     return await this.exist({
       where: { id: mediaId },
+    });
+  }
+
+  public async findOneByIdAndOwnerIdAndAlbumId(
+    mediaId: string,
+    userId: string,
+    albumId: string,
+  ): Promise<MediaEntity> {
+    return await this.findOneBy({
+      id: mediaId,
+      user: { id: userId },
+      media_to_albums: {
+        albumId,
+      },
     });
   }
 

@@ -1,5 +1,5 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import * as CombinedStream from 'combined-stream';
+import CombinedStream from 'combined-stream';
 
 import {
   EntityNotFoundException,

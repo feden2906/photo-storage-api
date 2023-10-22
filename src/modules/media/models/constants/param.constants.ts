@@ -1,1 +1,1 @@
-export const ImageId = 'imageId';
+export const MediaId = 'mediaId';
