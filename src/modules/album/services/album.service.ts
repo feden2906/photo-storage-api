@@ -57,9 +57,11 @@ export class AlbumService {
       throw new ForbiddenException();
     }
 
-    const title_image = mediaList.find((media) => media.id === dto.mediaIds[0]);
-
     if (!album.title_image) {
+      const title_image = mediaList.find(
+        (media) => media.id === dto.mediaIds[0],
+      );
+
       await this.albumRepository.save({
         id: albumId,
         title_image,
