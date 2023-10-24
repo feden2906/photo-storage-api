@@ -81,13 +81,13 @@ export class MediaController {
     await this.imageService.uploadMediaFiles(mediaPaths, user.userId);
   }
 
-  @ApiOperation({ description: 'Delete video or image' })
+  @ApiOperation({ description: 'Delete media' })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(`:${MediaId}`)
   public async deleteMedia(
     @CurrentUser() user: IUserData,
-    @Param(MediaId) imageId: string,
+    @Param(MediaId) mediaId: string,
   ): Promise<void> {
-    await this.imageService.deleteMedia(user.userId, imageId);
+    await this.imageService.deleteMedia(user.userId, mediaId);
   }
 }

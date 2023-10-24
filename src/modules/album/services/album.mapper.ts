@@ -8,10 +8,6 @@ export class AlbumMapper {
     return {
       id: entity.id,
       name: entity.name,
-      album_owner: entity.album_owner,
-      title_image: entity.title_image
-        ? MediaMapper.toResponseListItemDto(entity.title_image)
-        : null,
       created: entity.created,
       updated: entity.updated,
     };
@@ -20,8 +16,8 @@ export class AlbumMapper {
   static toResponseWithMedia(entity: AlbumEntity): AlbumWithMediaResponseDto {
     const album = AlbumMapper.toResponse(entity);
 
-    const mediaList = entity.media_to_albums.map((mediaToAlbums) =>
-      MediaMapper.toResponseListItemDto(mediaToAlbums.media),
+    const mediaList = entity.media_to_album.map((mediaToAlbum) =>
+      MediaMapper.toResponseListItemDto(mediaToAlbum.media),
     );
 
     return {

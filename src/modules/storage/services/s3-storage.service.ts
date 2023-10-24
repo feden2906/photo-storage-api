@@ -9,7 +9,7 @@ import {
 import { S3ClientConfig } from '@aws-sdk/client-s3/dist-types/S3Client';
 import { Injectable } from '@nestjs/common';
 import { StorageEngine } from 'multer';
-import * as multerS3 from 'multer-s3';
+import multerS3 from 'multer-s3';
 import { Readable } from 'stream';
 import { v4 } from 'uuid';
 

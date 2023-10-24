@@ -88,7 +88,7 @@ export class MediaService {
       this.mediaRepository.findOneByIdAndOwner(userId, mediaId),
     ]);
     if (!isExist) throw new EntityNotFoundException();
-    if (isExist && !media) throw new NoPermissionException();
+    if (!media) throw new NoPermissionException();
     return media;
   }
 

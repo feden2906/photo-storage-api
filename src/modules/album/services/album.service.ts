@@ -1,34 +1,39 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { In } from 'typeorm';
+import { FindOptionsRelations } from 'typeorm/find-options/FindOptionsRelations';
 
 import {
   EntityNotFoundException,
   NoPermissionException,
 } from '../../../common/http';
+import { IUserData } from '../../../common/models';
 import { AlbumEntity } from '../../../database';
 import { MediaService } from '../../media/services/media.service';
 import { AlbumRepository } from '../../repository/services/album.repository';
 import { MediaRepository } from '../../repository/services/media.repository';
-import { MediaToAlbumsRepository } from '../../repository/services/media_to_albums.repository';
-import { RoleRepository } from '../../repository/services/role.repository';
+import { MediaToAlbumRepository } from '../../repository/services/media_to_album.repository';
 import { UserRepository } from '../../repository/services/user.repository';
-import { UserToAlbumsRepository } from '../../repository/services/user_to_albums.repository';
+import { UserToAlbumRepository } from '../../repository/services/user_to_album.repository';
 import {
   AlbumCreateRequestDto,
   DetachMediaFromAlbumRequestDto,
 } from '../models/dtos/request';
 import { AddMemberRequestDto } from '../models/dtos/request/add-member.request.dto';
+import { EAlbumRole } from '../models/enums';
 
 @Injectable()
 export class AlbumService {
   constructor(
     private mediaService: MediaService,
     private userRepository: UserRepository,
-    private mediaToAlbumsRepository: MediaToAlbumsRepository,
-    private userToAlbumsRepository: UserToAlbumsRepository,
+    private mediaToAlbumRepository: MediaToAlbumRepository,
+    private userToAlbumRepository: UserToAlbumRepository,
     private albumRepository: AlbumRepository,
     private mediaRepository: MediaRepository,
-    private roleRepository: RoleRepository,
   ) {}
 
   public async getListAlbum(userId: string): Promise<AlbumEntity[]> {
@@ -39,26 +44,32 @@ export class AlbumService {
     userId: string,
     albumId: string,
   ): Promise<AlbumEntity> {
-    return await this.checkAbilityToManage(userId, albumId);
+    return await this.checkExisting(userId, albumId, {
+      media_to_album: {
+        media: true,
+      },
+    });
   }
 
   public async createAlbum(
-    dto: AlbumCreateRequestDto,
     userId: string,
+    dto: AlbumCreateRequestDto,
   ): Promise<AlbumEntity> {
-    const album = await this.albumRepository.createAlbum(dto, userId);
+    const album = await this.albumRepository.createAlbum(dto);
 
-    await this.roleRepository.save({
-      album,
-      user: { id: userId },
-      roles: ['Owner'],
-    });
+    await this.userToAlbumRepository.save(
+      this.userToAlbumRepository.create({
+        album,
+        userId,
+        role: EAlbumRole.ADMIN,
+      }),
+    );
 
-    return await this.albumRepository.createAlbum(dto, userId);
+    return album;
   }
 
   public async deleteAlbum(userId: string, albumId: string) {
-    await this.checkAbilityToManage(userId, albumId);
+    await this.checkExisting(userId, albumId);
 
     await this.albumRepository.delete(albumId);
   }
@@ -68,7 +79,7 @@ export class AlbumService {
     albumId: string,
     dto: DetachMediaFromAlbumRequestDto,
   ): Promise<void> {
-    const album = await this.checkAbilityToManage(userId, albumId);
+    const album = await this.checkExisting(userId, albumId);
 
     const mediaList = await this.mediaRepository.findManyByIdsAndOwner(
       userId,
@@ -92,7 +103,7 @@ export class AlbumService {
 
     const mediaToAlbums = mediaList.map((media) => ({ album, media }));
 
-    await this.mediaToAlbumsRepository.save(mediaToAlbums);
+    await this.mediaToAlbumRepository.save(mediaToAlbums);
   }
 
   public async detachMedia(
@@ -100,7 +111,9 @@ export class AlbumService {
     userId: string,
     dto: DetachMediaFromAlbumRequestDto,
   ): Promise<void> {
-    const album = await this.checkAbilityToManage(userId, albumId);
+    const album = await this.checkExisting(userId, albumId, {
+      title_image: true,
+    });
 
     if (dto.mediaIds.includes(album.title_image?.id)) {
       const media = await this.mediaRepository.findOneByMediaIdsNotInAndAlbumId(
@@ -114,7 +127,7 @@ export class AlbumService {
     }
 
     const mediaList =
-      await this.mediaToAlbumsRepository.findManyByUserAndAlbumAndMedia(
+      await this.mediaToAlbumRepository.findManyByUserAndAlbumAndMedia(
         userId,
         albumId,
         dto.mediaIds,
@@ -124,7 +137,7 @@ export class AlbumService {
       throw new ForbiddenException();
     }
 
-    await this.mediaToAlbumsRepository.delete({
+    await this.mediaToAlbumRepository.delete({
       media: { id: In(dto.mediaIds) },
     });
   }
@@ -134,7 +147,7 @@ export class AlbumService {
     albumId: string,
     mediaId: string,
   ) {
-    await this.checkAbilityToManage(userId, albumId);
+    await this.checkExisting(userId, albumId);
 
     const media = await this.mediaRepository.findOneByIdAndOwnerIdAndAlbumId(
       mediaId,
@@ -148,44 +161,50 @@ export class AlbumService {
   }
 
   public async detachTitleImage(userId: string, albumId: string) {
-    await this.checkAbilityToManage(userId, albumId);
+    await this.checkExisting(userId, albumId);
 
     await this.albumRepository.save({ id: albumId, title_image: null });
   }
 
+  public availableRoles() {
+    return Object.values(EAlbumRole);
+  }
+
   public async addMember(
-    userId: string,
+    userData: IUserData,
     albumId: string,
     dto: AddMemberRequestDto,
   ): Promise<void> {
-    if (userId === dto.memberId) throw new ForbiddenException();
+    if (userData.email === dto.memberEmail) throw new ConflictException();
 
-    const album = await this.checkAbilityToManage(userId, albumId);
+    const album = await this.checkExisting(userData.userId, albumId);
 
-    const member = await this.userRepository.findOneOrFail({
-      where: { id: dto.memberId },
+    const member = await this.userRepository.findOneByOrFail({
+      email: dto.memberEmail,
     });
 
-    await Promise.all([
-      await this.roleRepository.save({
+    await this.userToAlbumRepository.save(
+      this.userToAlbumRepository.create({
         album,
         user: member,
-        roles: [dto.role],
+        role: dto.role,
       }),
-      await this.userToAlbumsRepository.save({ album, user: member }),
-    ]);
+    );
   }
 
-  private async checkAbilityToManage(
+  private async checkExisting(
     userId: string,
     albumId: string,
+    relations?: FindOptionsRelations<AlbumEntity>,
   ): Promise<AlbumEntity> {
-    const [isExist, album] = await Promise.all([
-      this.albumRepository.isExist(albumId),
-      this.albumRepository.findOneByIdAndOwner(userId, albumId),
-    ]);
-    if (!isExist) throw new EntityNotFoundException();
-    if (isExist && !album) throw new NoPermissionException();
+    const album = await this.albumRepository.findOneByIdAndUserIdWithRelations(
+      userId,
+      albumId,
+      relations,
+    );
+
+    if (!album) throw new EntityNotFoundException();
+
     return album;
   }
 }

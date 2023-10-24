@@ -14,6 +14,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from '../../common/decorators';
 import { IUserData } from '../../common/models';
 import { MediaId } from '../media/models/constants';
+import { AlbumRoleDecorator } from './decorators/album-role.decorator';
 import { AlbumId } from './models/constants';
 import {
   AlbumCreateRequestDto,
@@ -22,7 +23,7 @@ import {
 } from './models/dtos/request';
 import { AddMemberRequestDto } from './models/dtos/request/add-member.request.dto';
 import { AlbumResponseDto } from './models/dtos/response';
-import { AlbumWithMediaResponseDto } from './models/dtos/response/album-with-media.response.dto';
+import { EAlbumRole } from './models/enums';
 import { AlbumMapper } from './services/album.mapper';
 import { AlbumService } from './services/album.service';
 
@@ -32,6 +33,16 @@ import { AlbumService } from './services/album.service';
 export class AlbumController {
   constructor(private albumService: AlbumService) {}
 
+  @ApiOperation({ description: 'Creating an album' })
+  @Post()
+  public async createAlbum(
+    @CurrentUser() user: IUserData,
+    @Body() dto: AlbumCreateRequestDto,
+  ): Promise<AlbumResponseDto> {
+    const albumEntity = await this.albumService.createAlbum(user.userId, dto);
+    return AlbumMapper.toResponse(albumEntity);
+  }
+
   @ApiOperation({ description: 'Get a list of albums' })
   @Get()
   public async getAlbumList(
@@ -40,26 +51,18 @@ export class AlbumController {
     const albumList = await this.albumService.getListAlbum(user.userId);
     return AlbumMapper.toManyResponse(albumList);
   }
-
-  @ApiOperation({ description: 'Get a album with media' })
+  @AlbumRoleDecorator(EAlbumRole.VIEWER)
+  @ApiOperation({ description: 'Get an album with media' })
   @Get(`:${AlbumId}`)
   public async getAlbumById(
     @Param(AlbumId, ParseUUIDPipe) albumId: string,
     @CurrentUser() user: IUserData,
-  ): Promise<AlbumWithMediaResponseDto> {
+  ): Promise<any> {
     const album = await this.albumService.getAlbumById(user.userId, albumId);
     return AlbumMapper.toResponseWithMedia(album);
   }
-  @ApiOperation({ description: 'Creating an album' })
-  @Post()
-  public async createAlbum(
-    @CurrentUser() user: IUserData,
-    @Body() dto: AlbumCreateRequestDto,
-  ): Promise<AlbumResponseDto> {
-    const albumEntity = await this.albumService.createAlbum(dto, user.userId);
-    return AlbumMapper.toResponse(albumEntity);
-  }
 
+  @AlbumRoleDecorator(EAlbumRole.EDITOR)
   @ApiOperation({
     description: 'Deleting an album',
   })
@@ -72,6 +75,7 @@ export class AlbumController {
     await this.albumService.deleteAlbum(user.userId, albumId);
   }
 
+  // @AlbumRoleDecorator(EAlbumRole.EDITOR)
   @ApiOperation({
     description: 'Attaching media to an album',
   })
@@ -85,6 +89,7 @@ export class AlbumController {
     await this.albumService.attachMedia(user.userId, albumId, dto);
   }
 
+  @AlbumRoleDecorator(EAlbumRole.EDITOR)
   @ApiOperation({
     description: 'Detaching media from album',
   })
@@ -98,6 +103,7 @@ export class AlbumController {
     await this.albumService.detachMedia(albumId, user.userId, dto);
   }
 
+  @AlbumRoleDecorator(EAlbumRole.ADMIN)
   @ApiOperation({
     description: 'Attaching title image to an album',
   })
@@ -111,6 +117,7 @@ export class AlbumController {
     await this.albumService.attachTitleImage(user.userId, albumId, mediaId);
   }
 
+  @AlbumRoleDecorator(EAlbumRole.ADMIN)
   @ApiOperation({
     description: 'Detaching title image to an album',
   })
@@ -123,6 +130,7 @@ export class AlbumController {
     await this.albumService.detachTitleImage(user.userId, albumId);
   }
 
+  @AlbumRoleDecorator(EAlbumRole.ADMIN)
   @ApiOperation({
     description: 'Add member to album',
   })
@@ -133,6 +141,6 @@ export class AlbumController {
     @Body() dto: AddMemberRequestDto,
     @CurrentUser() user: IUserData,
   ) {
-    await this.albumService.addMember(user.userId, albumId, dto);
+    await this.albumService.addMember(user, albumId, dto);
   }
 }

@@ -5,7 +5,7 @@ import { Readable } from 'stream';
 import { IStorageProviderService } from '../models/interfaces/storage-provider-service.interface';
 
 @Injectable()
-export class StorageService implements IStorageProviderService {
+export class StorageService {
   constructor(
     @Inject('StorageProviderService')
     private readonly storageProvideService: IStorageProviderService,

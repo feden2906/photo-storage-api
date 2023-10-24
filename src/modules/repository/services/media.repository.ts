@@ -36,7 +36,7 @@ export class MediaRepository extends Repository<MediaEntity> {
     albumId: string,
   ) {
     return await this.findOneBy({
-      media_to_albums: {
+      media_to_album: {
         albumId,
       },
       id: Not(In(mediaIds)),
@@ -76,7 +76,7 @@ export class MediaRepository extends Repository<MediaEntity> {
     return await this.findOneBy({
       id: mediaId,
       user: { id: userId },
-      media_to_albums: {
+      media_to_album: {
         albumId,
       },
     });

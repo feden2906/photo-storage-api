@@ -8,10 +8,8 @@ import {
 
 import { CreatedUpdatedDateModel } from './_created-updated-date.model';
 import { MediaEntity } from './media.entity';
-import { MediaToAlbumsEntity } from './media_to_albums.entity';
-import { RoleEntity } from './role.entity';
-import { UserEntity } from './user.entity';
-import { UserToAlbumsEntity } from './user_to_albums.entity';
+import { MediaToAlbumEntity } from './media_to_album.entity';
+import { UserToAlbumEntity } from './user_to_album.entity';
 
 @Entity('album')
 export class AlbumEntity extends CreatedUpdatedDateModel {
@@ -21,8 +19,8 @@ export class AlbumEntity extends CreatedUpdatedDateModel {
   @Column('text')
   name: string;
 
-  @OneToMany(() => MediaToAlbumsEntity, (entity) => entity.album)
-  media_to_albums: MediaToAlbumsEntity[];
+  @OneToMany(() => MediaToAlbumEntity, (entity) => entity.album)
+  media_to_album: MediaToAlbumEntity[];
 
   @ManyToOne(() => MediaEntity, (entity) => entity.albums_title, {
     onDelete: 'SET NULL',
@@ -30,14 +28,6 @@ export class AlbumEntity extends CreatedUpdatedDateModel {
   })
   title_image?: MediaEntity;
 
-  @OneToMany(() => RoleEntity, (entity) => entity.album)
-  role: RoleEntity[];
-
-  @ManyToOne(() => UserEntity, (entity) => entity.own_albums, {
-    onDelete: 'CASCADE',
-  })
-  album_owner: UserEntity;
-
-  @OneToMany(() => UserToAlbumsEntity, (entity) => entity.album)
-  user_to_albums?: UserToAlbumsEntity[];
+  @OneToMany(() => UserToAlbumEntity, (entity) => entity.album)
+  user_to_album?: UserToAlbumEntity[];
 }

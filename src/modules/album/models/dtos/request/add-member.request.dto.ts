@@ -1,11 +1,15 @@
-import { IsEnum, IsUUID } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsEmail, IsEnum, IsNotEmpty } from 'class-validator';
 
-import { ERole } from '../../../../role/models/enums';
+import { lowerCaseTransformer } from '../../../../../common/helpers';
+import { EAlbumRole } from '../../enums';
 
 export class AddMemberRequestDto {
-  @IsEnum(ERole)
-  role: ERole;
+  @IsEnum(EAlbumRole)
+  role: EAlbumRole;
 
-  @IsUUID()
-  memberId: string;
+  @Transform(({ value }) => lowerCaseTransformer.to(value))
+  @IsNotEmpty()
+  @IsEmail()
+  memberEmail: string;
 }

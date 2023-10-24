@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, In, Repository } from 'typeorm';
 
-import { MediaToAlbumsEntity } from '../../../database/entities/media_to_albums.entity';
+import { MediaToAlbumEntity } from '../../../database/entities/media_to_album.entity';
 
 @Injectable()
-export class MediaToAlbumsRepository extends Repository<MediaToAlbumsEntity> {
+export class MediaToAlbumRepository extends Repository<MediaToAlbumEntity> {
   constructor(private readonly dataSource: DataSource) {
-    super(MediaToAlbumsEntity, dataSource.manager);
+    super(MediaToAlbumEntity, dataSource.manager);
   }
 
   public async findManyByUserAndAlbumAndMedia(
     userId: string,
     albumId: string,
     mediaIds: string[],
-  ): Promise<MediaToAlbumsEntity[]> {
+  ): Promise<MediaToAlbumEntity[]> {
     return await this.find({
       where: {
         albumId,
