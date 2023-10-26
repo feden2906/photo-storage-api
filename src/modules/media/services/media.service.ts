@@ -20,17 +20,30 @@ export class MediaService {
   ) {}
 
   public async getMediaList(
+    userId: string,
     query: MediaListQueryDto,
   ): Promise<ListEntityType<MediaEntity>> {
-    return await this.mediaRepository.getMediaList(query);
+    return await this.mediaRepository.getMediaList(userId, query);
+  }
+
+  public async getMediaListByAlbumId(
+    userId: string,
+    query: MediaListQueryDto,
+    albumId: string,
+  ): Promise<ListEntityType<MediaEntity>> {
+    return await this.mediaRepository.getMediaList(userId, query, albumId);
   }
 
   public async getMediaStreams(
+    userId: string,
     query: MediaListQueryDto,
   ): Promise<CombinedStream> {
     const combinedStream = CombinedStream.create();
 
-    const { data: mediaList } = await this.mediaRepository.getMediaList(query);
+    const { data: mediaList } = await this.mediaRepository.getMediaList(
+      userId,
+      query,
+    );
 
     for (const media of mediaList) {
       combinedStream.append(await this.storageService.getFile(media.url));

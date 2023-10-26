@@ -15,7 +15,7 @@ import { CurrentUser } from '../../common/decorators';
 import { IUserData } from '../../common/models';
 import { MediaId } from '../media/models/constants';
 import { AlbumRoleDecorator } from './decorators/album-role.decorator';
-import { AlbumId } from './models/constants';
+import { AlbumId, MemberId } from './models/constants';
 import {
   AlbumCreateRequestDto,
   AttachMediaToAlbumRequestDto,
@@ -52,17 +52,17 @@ export class AlbumController {
     return AlbumMapper.toManyResponse(albumList);
   }
   @AlbumRoleDecorator(EAlbumRole.VIEWER)
-  @ApiOperation({ description: 'Get an album with media' })
+  @ApiOperation({ description: 'Get an album' })
   @Get(`:${AlbumId}`)
   public async getAlbumById(
     @Param(AlbumId, ParseUUIDPipe) albumId: string,
     @CurrentUser() user: IUserData,
-  ): Promise<any> {
+  ): Promise<AlbumResponseDto> {
     const album = await this.albumService.getAlbumById(user.userId, albumId);
-    return AlbumMapper.toResponseWithMedia(album);
+    return AlbumMapper.toResponse(album);
   }
 
-  @AlbumRoleDecorator(EAlbumRole.EDITOR)
+  @AlbumRoleDecorator(EAlbumRole.ADMIN)
   @ApiOperation({
     description: 'Deleting an album',
   })
@@ -70,12 +70,11 @@ export class AlbumController {
   @Delete(`:${AlbumId}`)
   public async deleteAlbum(
     @Param(AlbumId, ParseUUIDPipe) albumId: string,
-    @CurrentUser() user: IUserData,
   ): Promise<void> {
-    await this.albumService.deleteAlbum(user.userId, albumId);
+    await this.albumService.deleteAlbum(albumId);
   }
 
-  // @AlbumRoleDecorator(EAlbumRole.EDITOR)
+  @AlbumRoleDecorator(EAlbumRole.EDITOR)
   @ApiOperation({
     description: 'Attaching media to an album',
   })
@@ -132,7 +131,7 @@ export class AlbumController {
 
   @AlbumRoleDecorator(EAlbumRole.ADMIN)
   @ApiOperation({
-    description: 'Add member to album',
+    description: 'Adding member to album',
   })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post(`:${AlbumId}/member`)
@@ -142,5 +141,19 @@ export class AlbumController {
     @CurrentUser() user: IUserData,
   ) {
     await this.albumService.addMember(user, albumId, dto);
+  }
+
+  @AlbumRoleDecorator(EAlbumRole.ADMIN)
+  @ApiOperation({
+    description: 'Deleting member from album',
+  })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete(`:${AlbumId}/member/:${MemberId}`)
+  public async deleteMember(
+    @Param(AlbumId, ParseUUIDPipe) albumId: string,
+    @Param(MemberId, ParseUUIDPipe) memberId: string,
+    @CurrentUser() user: IUserData,
+  ) {
+    await this.albumService.detachMember(user.userId, memberId, albumId);
   }
 }

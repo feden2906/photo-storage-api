@@ -44,11 +44,7 @@ export class AlbumService {
     userId: string,
     albumId: string,
   ): Promise<AlbumEntity> {
-    return await this.checkExisting(userId, albumId, {
-      media_to_album: {
-        media: true,
-      },
-    });
+    return await this.getByIdAndCheckExist(albumId);
   }
 
   public async createAlbum(
@@ -68,8 +64,8 @@ export class AlbumService {
     return album;
   }
 
-  public async deleteAlbum(userId: string, albumId: string) {
-    await this.checkExisting(userId, albumId);
+  public async deleteAlbum(albumId: string) {
+    await this.getByIdAndCheckExist(albumId);
 
     await this.albumRepository.delete(albumId);
   }
@@ -79,7 +75,7 @@ export class AlbumService {
     albumId: string,
     dto: DetachMediaFromAlbumRequestDto,
   ): Promise<void> {
-    const album = await this.checkExisting(userId, albumId);
+    const album = await this.getByIdAndCheckExist(albumId);
 
     const mediaList = await this.mediaRepository.findManyByIdsAndOwner(
       userId,
@@ -111,7 +107,7 @@ export class AlbumService {
     userId: string,
     dto: DetachMediaFromAlbumRequestDto,
   ): Promise<void> {
-    const album = await this.checkExisting(userId, albumId, {
+    const album = await this.getByIdAndCheckExist(albumId, {
       title_image: true,
     });
 
@@ -147,7 +143,7 @@ export class AlbumService {
     albumId: string,
     mediaId: string,
   ) {
-    await this.checkExisting(userId, albumId);
+    await this.getByIdAndCheckExist(albumId);
 
     const media = await this.mediaRepository.findOneByIdAndOwnerIdAndAlbumId(
       mediaId,
@@ -161,13 +157,9 @@ export class AlbumService {
   }
 
   public async detachTitleImage(userId: string, albumId: string) {
-    await this.checkExisting(userId, albumId);
+    await this.getByIdAndCheckExist(albumId);
 
     await this.albumRepository.save({ id: albumId, title_image: null });
-  }
-
-  public availableRoles() {
-    return Object.values(EAlbumRole);
   }
 
   public async addMember(
@@ -177,7 +169,7 @@ export class AlbumService {
   ): Promise<void> {
     if (userData.email === dto.memberEmail) throw new ConflictException();
 
-    const album = await this.checkExisting(userData.userId, albumId);
+    const album = await this.getByIdAndCheckExist(albumId);
 
     const member = await this.userRepository.findOneByOrFail({
       email: dto.memberEmail,
@@ -192,13 +184,21 @@ export class AlbumService {
     );
   }
 
-  private async checkExisting(
-    userId: string,
+  public async detachMember(
+    ownerId: string,
+    memberId: string,
+    albumId: string,
+  ) {
+    if (ownerId === memberId) throw new ConflictException();
+
+    await this.userToAlbumRepository.delete({ userId: memberId, albumId });
+  }
+
+  private async getByIdAndCheckExist(
     albumId: string,
     relations?: FindOptionsRelations<AlbumEntity>,
   ): Promise<AlbumEntity> {
     const album = await this.albumRepository.findOneByIdAndUserIdWithRelations(
-      userId,
       albumId,
       relations,
     );

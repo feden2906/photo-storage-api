@@ -13,7 +13,9 @@ export class MediaRepository extends Repository<MediaEntity> {
   }
 
   public async getMediaList(
+    userId: string,
     query: MediaListQueryDto,
+    albumId?: string,
   ): Promise<ListEntityType<MediaEntity>> {
     const queryBuilder = this.createQueryBuilder('media');
 
@@ -24,6 +26,12 @@ export class MediaRepository extends Repository<MediaEntity> {
     }
 
     queryBuilder.select(['media.id', 'media.url', 'media.created']);
+    queryBuilder.where('media.userId = :userId', { userId });
+
+    if (albumId) {
+      queryBuilder.where('media.mediaToAlbum = :albumId', { albumId });
+    }
+
     queryBuilder.limit(query.limit);
     queryBuilder.offset(query.offset);
 
