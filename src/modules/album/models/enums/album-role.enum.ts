@@ -2,7 +2,7 @@
  * Sorted in the correct order. Sorted by priority
  */
 
-export enum EAlbumRole {
+export enum AlbumRoleEnum {
   OWNER = 'Owner',
   EDITOR = 'Editor',
   VIEWER = 'Viewer',

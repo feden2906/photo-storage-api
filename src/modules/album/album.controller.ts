@@ -23,7 +23,7 @@ import {
 } from './models/dtos/request';
 import { AddMemberRequestDto } from './models/dtos/request/add-member.request.dto';
 import { AlbumResponseDto } from './models/dtos/response';
-import { EAlbumRole } from './models/enums';
+import { AlbumRoleEnum } from './models/enums';
 import { AlbumMapper } from './services/album.mapper';
 import { AlbumService } from './services/album.service';
 
@@ -51,7 +51,7 @@ export class AlbumController {
     const albumList = await this.albumService.getListAlbum(user.userId);
     return AlbumMapper.toManyResponse(albumList);
   }
-  @AlbumRoleDecorator(EAlbumRole.VIEWER)
+  @AlbumRoleDecorator(AlbumRoleEnum.VIEWER)
   @ApiOperation({ description: 'Get an album' })
   @Get(`:${AlbumId}`)
   public async getAlbumById(
@@ -62,7 +62,7 @@ export class AlbumController {
     return AlbumMapper.toResponse(album);
   }
 
-  @AlbumRoleDecorator(EAlbumRole.OWNER)
+  @AlbumRoleDecorator(AlbumRoleEnum.OWNER)
   @ApiOperation({
     description: 'Deleting an album',
   })
@@ -74,7 +74,7 @@ export class AlbumController {
     await this.albumService.deleteAlbum(albumId);
   }
 
-  @AlbumRoleDecorator(EAlbumRole.EDITOR)
+  @AlbumRoleDecorator(AlbumRoleEnum.EDITOR)
   @ApiOperation({
     description: 'Attaching media to an album',
   })
@@ -88,7 +88,7 @@ export class AlbumController {
     await this.albumService.attachMedia(user.userId, albumId, dto);
   }
 
-  @AlbumRoleDecorator(EAlbumRole.EDITOR)
+  @AlbumRoleDecorator(AlbumRoleEnum.EDITOR)
   @ApiOperation({
     description: 'Detaching media from album',
   })
@@ -102,7 +102,7 @@ export class AlbumController {
     await this.albumService.detachMedia(albumId, user.userId, dto);
   }
 
-  @AlbumRoleDecorator(EAlbumRole.OWNER)
+  @AlbumRoleDecorator(AlbumRoleEnum.OWNER)
   @ApiOperation({
     description: 'Attaching title image to an album',
   })
@@ -116,7 +116,7 @@ export class AlbumController {
     await this.albumService.attachTitleImage(user.userId, albumId, mediaId);
   }
 
-  @AlbumRoleDecorator(EAlbumRole.OWNER)
+  @AlbumRoleDecorator(AlbumRoleEnum.OWNER)
   @ApiOperation({
     description: 'Detaching title image to an album',
   })
@@ -129,7 +129,7 @@ export class AlbumController {
     await this.albumService.detachTitleImage(user.userId, albumId);
   }
 
-  @AlbumRoleDecorator(EAlbumRole.OWNER)
+  @AlbumRoleDecorator(AlbumRoleEnum.OWNER)
   @ApiOperation({
     description: 'Adding member to album',
   })
@@ -143,7 +143,7 @@ export class AlbumController {
     await this.albumService.addMember(user.email, albumId, dto);
   }
 
-  @AlbumRoleDecorator(EAlbumRole.OWNER)
+  @AlbumRoleDecorator(AlbumRoleEnum.OWNER)
   @ApiOperation({
     description: 'Deleting member from album',
   })

@@ -4,7 +4,7 @@ import { Reflector } from '@nestjs/core';
 import { NoPermissionException } from '../../../common/http';
 import { UserToAlbumRepository } from '../../repository/services/user_to_album.repository';
 import { metadataKeys } from '../models/constants';
-import { EAlbumRole } from '../models/enums';
+import { AlbumRoleEnum } from '../models/enums';
 
 @Injectable()
 export class AlbumRoleGuard implements CanActivate {
@@ -30,7 +30,7 @@ export class AlbumRoleGuard implements CanActivate {
 
     if (!userToAlbum) throw new NoPermissionException();
 
-    const sortedRoles = Object.values(EAlbumRole);
+    const sortedRoles = Object.values(AlbumRoleEnum);
 
     const neededIndex = sortedRoles.findIndex((role) => role === neededRole);
     const userIndex = sortedRoles.findIndex(

@@ -24,7 +24,7 @@ import { CurrentUser, MediaPaths } from '../../common/decorators';
 import { IUserData } from '../../common/models';
 import { AlbumRoleDecorator } from '../album/decorators/album-role.decorator';
 import { AlbumId } from '../album/models/constants';
-import { EAlbumRole } from '../album/models/enums';
+import { AlbumRoleEnum } from '../album/models/enums';
 import { LocalFilesInterceptor } from '../storage/file.interceptor';
 import { MediaId } from './models/constants';
 import { MediaListQueryDto } from './models/dtos/request';
@@ -61,7 +61,7 @@ export class MediaController {
     return MediaMapper.toResponseListDto(result, query);
   }
 
-  @AlbumRoleDecorator(EAlbumRole.VIEWER)
+  @AlbumRoleDecorator(AlbumRoleEnum.VIEWER)
   @ApiOperation({ description: 'Get list of my media by album id' })
   @Get(`${AlbumId}`)
   public async getMediaListByAlbumId(

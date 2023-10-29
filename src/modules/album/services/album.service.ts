@@ -19,7 +19,7 @@ import {
   DetachMediaFromAlbumRequestDto,
 } from '../models/dtos/request';
 import { AddMemberRequestDto } from '../models/dtos/request/add-member.request.dto';
-import { EAlbumRole } from '../models/enums';
+import { AlbumRoleEnum } from '../models/enums';
 
 @Injectable()
 export class AlbumService {
@@ -53,7 +53,7 @@ export class AlbumService {
       this.userToAlbumRepository.create({
         album,
         userId,
-        role: EAlbumRole.OWNER,
+        role: AlbumRoleEnum.OWNER,
       }),
     );
 

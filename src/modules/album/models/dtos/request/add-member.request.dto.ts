@@ -2,11 +2,11 @@ import { Transform } from 'class-transformer';
 import { IsEmail, IsEnum, IsNotEmpty } from 'class-validator';
 
 import { lowerCaseTransformer } from '../../../../../common/helpers';
-import { EAlbumRole } from '../../enums';
+import { AlbumRoleEnum } from '../../enums';
 
 export class AddMemberRequestDto {
-  @IsEnum(EAlbumRole)
-  role: EAlbumRole;
+  @IsEnum(AlbumRoleEnum)
+  role: AlbumRoleEnum;
 
   @Transform(({ value }) => lowerCaseTransformer.to(value))
   @IsNotEmpty()

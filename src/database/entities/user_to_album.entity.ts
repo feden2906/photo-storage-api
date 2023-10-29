@@ -7,7 +7,7 @@ import {
   Unique,
 } from 'typeorm';
 
-import { EAlbumRole } from '../../modules/album/models/enums';
+import { AlbumRoleEnum } from '../../modules/album/models/enums';
 import { AlbumEntity } from './album.entity';
 import { UserEntity } from './user.entity';
 
@@ -20,8 +20,8 @@ export class UserToAlbumEntity {
   @PrimaryColumn()
   userId: string;
 
-  @Column({ enum: EAlbumRole, type: 'enum' })
-  role: EAlbumRole;
+  @Column({ enum: AlbumRoleEnum, type: 'enum' })
+  role: AlbumRoleEnum;
 
   @ManyToOne(() => AlbumEntity, (entity) => entity.user_to_album, {
     onDelete: 'CASCADE',
