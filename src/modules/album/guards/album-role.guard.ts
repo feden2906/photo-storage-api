@@ -1,11 +1,7 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  ForbiddenException,
-  Injectable,
-} from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
+import { NoPermissionException } from '../../../common/http';
 import { UserToAlbumRepository } from '../../repository/services/user_to_album.repository';
 import { metadataKeys } from '../models/constants';
 import { EAlbumRole } from '../models/enums';
@@ -27,22 +23,19 @@ export class AlbumRoleGuard implements CanActivate {
       context.getHandler(),
     );
 
-    const userTOA = await this.userToAlbumRepository.findOneBy({
+    const userToAlbum = await this.userToAlbumRepository.findOneBy({
       albumId,
       userId,
     });
 
-    if (!userTOA) throw new ForbiddenException();
+    if (!userToAlbum) throw new NoPermissionException();
 
     const sortedRoles = Object.values(EAlbumRole);
 
-    // await this.userToAlbumRepository.findOneBy({
-    //   album: { id: albumId },
-    //   user: { id: userId },
-    // });
-
     const neededIndex = sortedRoles.findIndex((role) => role === neededRole);
-    const userIndex = sortedRoles.findIndex((role) => role === userTOA.role);
+    const userIndex = sortedRoles.findIndex(
+      (role) => role === userToAlbum.role,
+    );
 
     return neededIndex >= userIndex;
   }

@@ -1,16 +1,12 @@
-import {
-  ConflictException,
-  ForbiddenException,
-  Injectable,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { In } from 'typeorm';
 import { FindOptionsRelations } from 'typeorm/find-options/FindOptionsRelations';
 
 import {
   EntityNotFoundException,
   NoPermissionException,
+  SomeConflictException,
 } from '../../../common/http';
-import { IUserData } from '../../../common/models';
 import { AlbumEntity } from '../../../database';
 import { MediaService } from '../../media/services/media.service';
 import { AlbumRepository } from '../../repository/services/album.repository';
@@ -57,7 +53,7 @@ export class AlbumService {
       this.userToAlbumRepository.create({
         album,
         userId,
-        role: EAlbumRole.ADMIN,
+        role: EAlbumRole.OWNER,
       }),
     );
 
@@ -83,7 +79,7 @@ export class AlbumService {
     );
 
     if (mediaList.length !== dto.mediaIds.length) {
-      throw new ForbiddenException();
+      throw new NoPermissionException();
     }
 
     if (!album.title_image) {
@@ -130,7 +126,7 @@ export class AlbumService {
       );
 
     if (mediaList.length !== dto.mediaIds.length) {
-      throw new ForbiddenException();
+      throw new NoPermissionException();
     }
 
     await this.mediaToAlbumRepository.delete({
@@ -163,11 +159,11 @@ export class AlbumService {
   }
 
   public async addMember(
-    userData: IUserData,
+    userEmail: string,
     albumId: string,
     dto: AddMemberRequestDto,
   ): Promise<void> {
-    if (userData.email === dto.memberEmail) throw new ConflictException();
+    if (userEmail === dto.memberEmail) throw new SomeConflictException();
 
     const album = await this.getByIdAndCheckExist(albumId);
 
@@ -189,7 +185,7 @@ export class AlbumService {
     memberId: string,
     albumId: string,
   ) {
-    if (ownerId === memberId) throw new ConflictException();
+    if (ownerId === memberId) throw new SomeConflictException();
 
     await this.userToAlbumRepository.delete({ userId: memberId, albumId });
   }

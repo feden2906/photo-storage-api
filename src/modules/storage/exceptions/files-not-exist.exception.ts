@@ -1,7 +1,9 @@
 import { BadRequestException } from '@nestjs/common';
 
+import { TranslationHelper } from '../../../common/helpers/translation.helper';
+
 export class FilesNotExistException extends BadRequestException {
   constructor() {
-    super('File not exist');
+    super(TranslationHelper.t('exceptions', 'FilesNotExist'));
   }
 }

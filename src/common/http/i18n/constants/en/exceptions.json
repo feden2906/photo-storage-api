@@ -1,3 +1,10 @@
 {
-  "FilesNotExist": "File not exist"
+  "FilesNotExist": "File not exist",
+  "NoPermission": "No permission",
+  "EntityNotFound": "Entity not found",
+  "Conflict": "Conflict",
+  "AccessTokenExpired": "Access token has expired",
+  "RefreshTokenExpired": "Refresh token has expired",
+  "InvalidCredentials": "Invalid credentials",
+  "InvalidToken": "Invalid token"
 }

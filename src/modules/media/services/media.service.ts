@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import CombinedStream from 'combined-stream';
 
 import {
@@ -111,7 +111,7 @@ export class MediaService {
       mediaIds,
     );
     if (mediaList.length !== mediaIds.length) {
-      throw new ForbiddenException();
+      throw new NoPermissionException();
     }
     return mediaIds;
   }

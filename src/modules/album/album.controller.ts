@@ -62,7 +62,7 @@ export class AlbumController {
     return AlbumMapper.toResponse(album);
   }
 
-  @AlbumRoleDecorator(EAlbumRole.ADMIN)
+  @AlbumRoleDecorator(EAlbumRole.OWNER)
   @ApiOperation({
     description: 'Deleting an album',
   })
@@ -102,34 +102,34 @@ export class AlbumController {
     await this.albumService.detachMedia(albumId, user.userId, dto);
   }
 
-  @AlbumRoleDecorator(EAlbumRole.ADMIN)
+  @AlbumRoleDecorator(EAlbumRole.OWNER)
   @ApiOperation({
     description: 'Attaching title image to an album',
   })
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Post(`${AlbumId}/title_image/:${MediaId}`)
+  @Post(`:${AlbumId}/title_image/:${MediaId}`)
   public async attachTitleImage(
     @Param(AlbumId, ParseUUIDPipe) albumId: string,
     @Param(MediaId, ParseUUIDPipe) mediaId: string,
     @CurrentUser() user: IUserData,
-  ) {
+  ): Promise<void> {
     await this.albumService.attachTitleImage(user.userId, albumId, mediaId);
   }
 
-  @AlbumRoleDecorator(EAlbumRole.ADMIN)
+  @AlbumRoleDecorator(EAlbumRole.OWNER)
   @ApiOperation({
     description: 'Detaching title image to an album',
   })
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Post(`${AlbumId}/title_image`)
+  @Post(`:${AlbumId}/title_image`)
   public async detachTitleImage(
     @Param(AlbumId, ParseUUIDPipe) albumId: string,
     @CurrentUser() user: IUserData,
-  ) {
+  ): Promise<void> {
     await this.albumService.detachTitleImage(user.userId, albumId);
   }
 
-  @AlbumRoleDecorator(EAlbumRole.ADMIN)
+  @AlbumRoleDecorator(EAlbumRole.OWNER)
   @ApiOperation({
     description: 'Adding member to album',
   })
@@ -139,11 +139,11 @@ export class AlbumController {
     @Param(AlbumId, ParseUUIDPipe) albumId: string,
     @Body() dto: AddMemberRequestDto,
     @CurrentUser() user: IUserData,
-  ) {
-    await this.albumService.addMember(user, albumId, dto);
+  ): Promise<void> {
+    await this.albumService.addMember(user.email, albumId, dto);
   }
 
-  @AlbumRoleDecorator(EAlbumRole.ADMIN)
+  @AlbumRoleDecorator(EAlbumRole.OWNER)
   @ApiOperation({
     description: 'Deleting member from album',
   })
@@ -153,7 +153,7 @@ export class AlbumController {
     @Param(AlbumId, ParseUUIDPipe) albumId: string,
     @Param(MemberId, ParseUUIDPipe) memberId: string,
     @CurrentUser() user: IUserData,
-  ) {
+  ): Promise<void> {
     await this.albumService.detachMember(user.userId, memberId, albumId);
   }
 }

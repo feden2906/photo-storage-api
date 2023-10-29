@@ -3,7 +3,7 @@
  */
 
 export enum EAlbumRole {
-  ADMIN = 'Admin',
+  OWNER = 'Owner',
   EDITOR = 'Editor',
   VIEWER = 'Viewer',
 }
