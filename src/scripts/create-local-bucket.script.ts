@@ -8,6 +8,7 @@ const client = new S3Client({
     accessKeyId: AWSConfigServiceStatic.accessKeyId,
     secretAccessKey: AWSConfigServiceStatic.secretAccessKey,
   },
+  region: AWSConfigServiceStatic.region,
   endpoint: AWSConfigServiceStatic.endpoint,
   forcePathStyle: true,
 });

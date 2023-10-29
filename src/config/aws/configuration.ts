@@ -9,4 +9,5 @@ export default registerAs(configToken, () => ({
   bucketPath: configService.get<string>('AWS_S3_BUCKET_PATH'),
   bucketName: configService.get<string>('AWS_S3_BUCKET_NAME'),
   endpoint: configService.get<string>('AWS_S3_ENDPOINT'),
+  region: configService.get<string>('AWS_S3_REGION'),
 }));

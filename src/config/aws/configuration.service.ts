@@ -33,4 +33,8 @@ export class AWSConfigService {
   get endpoint(): string {
     return this.awsConfiguration.endpoint;
   }
+
+  get region(): string {
+    return this.awsConfiguration.region;
+  }
 }

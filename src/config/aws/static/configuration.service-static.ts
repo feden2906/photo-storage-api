@@ -24,4 +24,8 @@ export class AWSConfigServiceStatic {
   static get endpoint(): string {
     return ConfigurationServiceStatic.get('AWS_S3_ENDPOINT');
   }
+
+  static get region(): string {
+    return ConfigurationServiceStatic.get('AWS_S3_REGION');
+  }
 }
