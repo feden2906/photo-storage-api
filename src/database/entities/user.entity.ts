@@ -1,23 +1,17 @@
-import {
-  Column,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import {
   lowerCaseTransformer,
   passwordHashTransformer,
 } from '../../common/helpers';
 import { CreatedUpdatedDateModel } from './_created-updated-date.model';
-import { AlbumEntity } from './album.entity';
 import { MediaEntity } from './media.entity';
+import { UserToAlbumEntity } from './user_to_album.entity';
 
 @Entity('user')
 export class UserEntity extends CreatedUpdatedDateModel {
-  @PrimaryGeneratedColumn('uuid') id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column('text', { nullable: false })
   firstName: string;
@@ -42,14 +36,6 @@ export class UserEntity extends CreatedUpdatedDateModel {
   @OneToMany(() => MediaEntity, (entity) => entity.user, { nullable: true })
   media?: MediaEntity[];
 
-  @OneToMany(() => AlbumEntity, (entity) => entity.album_owner, {
-    nullable: true,
-  })
-  own_albums?: AlbumEntity[];
-
-  @ManyToMany(() => AlbumEntity, (entity) => entity.album_viewers, {
-    nullable: true,
-  })
-  @JoinTable()
-  side_albums?: AlbumEntity[];
+  @OneToMany(() => UserToAlbumEntity, (entity) => entity.user)
+  user_to_album?: UserToAlbumEntity[];
 }

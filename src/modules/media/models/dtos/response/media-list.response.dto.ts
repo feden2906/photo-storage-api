@@ -3,6 +3,5 @@ import { MediaListItemResponseDto } from './media-list-item.response.dto';
 
 export class MediaListResponseDto extends MediaListQueryDto {
   data: MediaListItemResponseDto[];
-
   total: number;
 }

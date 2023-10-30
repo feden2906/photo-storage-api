@@ -5,3 +5,4 @@ export * from './invalid-credentials.exception';
 export * from './invalid-token.exception';
 export * from './no-permission.exception';
 export * from './refresh-token-expired.exception';
+export * from './conflict.exception';

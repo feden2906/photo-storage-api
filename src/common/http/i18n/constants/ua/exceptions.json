@@ -1,3 +1,10 @@
 {
-  "FilesNotExist": "Філє не існує"
+  "FilesNotExist": "Файл не існує",
+  "NoPermission": "Немає дозволу",
+  "EntityNotFound": "Сутність не знайдено",
+  "Conflict": "Конфлікт",
+  "AccessTokenExpired": "Термін дії токена доступа минув",
+  "RefreshTokenExpired": "Термін дії токена оновлення минув",
+  "InvalidCredentials": "Неправильні облікові дані",
+  "InvalidToken": "Недійсний токен"
 }

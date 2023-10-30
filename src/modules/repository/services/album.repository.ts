@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
+import { FindOptionsRelations } from 'typeorm/find-options/FindOptionsRelations';
 
 import { AlbumEntity } from '../../../database';
 import { AlbumCreateRequestDto } from '../../album/models/dtos/request';
@@ -10,20 +11,18 @@ export class AlbumRepository extends Repository<AlbumEntity> {
     super(AlbumEntity, dataSource.manager);
   }
 
-  public async createAlbum(
-    dto: AlbumCreateRequestDto,
-    userId: string,
-  ): Promise<AlbumEntity> {
+  public async createAlbum(dto: AlbumCreateRequestDto): Promise<AlbumEntity> {
     return await this.save({
       ...dto,
-      album_owner: { id: userId },
     });
   }
 
   public async findManyByOwnerId(userId: string): Promise<AlbumEntity[]> {
     return await this.find({
       where: {
-        album_owner: { id: userId },
+        user_to_album: {
+          userId,
+        },
       },
       relations: {
         title_image: true,
@@ -31,22 +30,15 @@ export class AlbumRepository extends Repository<AlbumEntity> {
     });
   }
 
-  public async findOneByIdAndOwner(
-    userId: string,
+  public async findOneByIdAndUserIdWithRelations(
     albumId: string,
+    relations?: FindOptionsRelations<AlbumEntity>,
   ): Promise<AlbumEntity> {
     return await this.findOne({
       where: {
         id: albumId,
-        album_owner: { id: userId },
       },
-      relations: { title_image: true },
-    });
-  }
-
-  public async isExist(albumId: string): Promise<boolean> {
-    return await this.exist({
-      where: { id: albumId },
+      relations,
     });
   }
 }

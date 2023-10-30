@@ -1,9 +1,9 @@
 import { UnauthorizedException } from '@nestjs/common';
 
-import { ErrorType } from '../../models';
+import { TranslationHelper } from '../../helpers/translation.helper';
 
 export class InvalidTokenException extends UnauthorizedException {
   constructor() {
-    super({ errorType: ErrorType.InvalidToken });
+    super(TranslationHelper.t('exceptions', 'InvalidToken'));
   }
 }

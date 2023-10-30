@@ -1,12 +1,9 @@
 import { UnauthorizedException } from '@nestjs/common';
 
-import { ErrorType } from '../../models';
+import { TranslationHelper } from '../../helpers/translation.helper';
 
 export class AccessTokenExpiredException extends UnauthorizedException {
   constructor() {
-    super({
-      errorType: ErrorType.AccessTokenExpired,
-      message: 'Access token has expired',
-    });
+    super(TranslationHelper.t('exceptions', 'AccessTokenExpired'));
   }
 }

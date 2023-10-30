@@ -8,7 +8,7 @@ import {
 
 import { CreatedUpdatedDateModel } from './_created-updated-date.model';
 import { AlbumEntity } from './album.entity';
-import { MediaToAlbumsEntity } from './media_to_albums.entity';
+import { MediaToAlbumEntity } from './media_to_album.entity';
 import { UserEntity } from './user.entity';
 
 @Entity('media')
@@ -19,8 +19,8 @@ export class MediaEntity extends CreatedUpdatedDateModel {
   @Column('text', { nullable: false })
   url: string;
 
-  @OneToMany(() => MediaToAlbumsEntity, (entity) => entity.media)
-  media_to_albums: MediaToAlbumsEntity[];
+  @OneToMany(() => MediaToAlbumEntity, (entity) => entity.media)
+  media_to_album: MediaToAlbumEntity[];
 
   @OneToMany(() => AlbumEntity, (entity) => entity.title_image, {
     nullable: true,

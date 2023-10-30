@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseUUIDPipe,
   Post,
   Query,
   Res,
@@ -21,6 +22,9 @@ import { Response } from 'express';
 
 import { CurrentUser, MediaPaths } from '../../common/decorators';
 import { IUserData } from '../../common/models';
+import { AlbumRoleDecorator } from '../album/decorators/album-role.decorator';
+import { AlbumId } from '../album/models/constants';
+import { AlbumRoleEnum } from '../album/models/enums';
 import { LocalFilesInterceptor } from '../storage/file.interceptor';
 import { MediaId } from './models/constants';
 import { MediaListQueryDto } from './models/dtos/request';
@@ -39,22 +43,41 @@ export class MediaController {
   public async downloadMedia(
     @Query() query: MediaListQueryDto,
     @Res() res: Response,
+    @CurrentUser() user: IUserData,
   ) {
     res.writeHead(200, { 'Content-Type': 'application/octet-stream' });
-    const stream = await this.imageService.getMediaStreams(query);
+    const stream = await this.imageService.getMediaStreams(user.userId, query);
     stream.pipe(res);
   }
 
-  @ApiOperation({ description: 'Get list of my videos and images' })
+  @ApiOperation({ description: 'Get list of my media' })
   @Get()
   public async getMediaList(
-    @Query() query: MediaListQueryDto,
+    @Query()
+    query: MediaListQueryDto,
+    @CurrentUser() user: IUserData,
   ): Promise<MediaListResponseDto> {
-    const result = await this.imageService.getMediaList(query);
+    const result = await this.imageService.getMediaList(user.userId, query);
     return MediaMapper.toResponseListDto(result, query);
   }
 
-  @ApiOperation({ description: 'Upload images and videos' })
+  @AlbumRoleDecorator(AlbumRoleEnum.VIEWER)
+  @ApiOperation({ description: 'Get list of my media by album id' })
+  @Get(`${AlbumId}`)
+  public async getMediaListByAlbumId(
+    @Param(AlbumId, ParseUUIDPipe) albumId: string,
+    @Query() query: MediaListQueryDto,
+    @CurrentUser() user: IUserData,
+  ): Promise<MediaListResponseDto> {
+    const result = await this.imageService.getMediaListByAlbumId(
+      user.userId,
+      query,
+      albumId,
+    );
+    return MediaMapper.toResponseListDto(result, query);
+  }
+
+  @ApiOperation({ description: 'Upload media' })
   @ApiBody({
     schema: {
       type: 'object',
@@ -81,13 +104,13 @@ export class MediaController {
     await this.imageService.uploadMediaFiles(mediaPaths, user.userId);
   }
 
-  @ApiOperation({ description: 'Delete video or image' })
+  @ApiOperation({ description: 'Delete media' })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(`:${MediaId}`)
   public async deleteMedia(
     @CurrentUser() user: IUserData,
-    @Param(MediaId) imageId: string,
+    @Param(MediaId) mediaId: string,
   ): Promise<void> {
-    await this.imageService.deleteMedia(user.userId, imageId);
+    await this.imageService.deleteMedia(user.userId, mediaId);
   }
 }

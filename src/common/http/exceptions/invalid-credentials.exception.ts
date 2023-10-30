@@ -1,12 +1,9 @@
 import { UnauthorizedException } from '@nestjs/common';
 
-import { ErrorType } from '../../models';
+import { TranslationHelper } from '../../helpers/translation.helper';
 
 export class InvalidCredentialsException extends UnauthorizedException {
   constructor() {
-    super({
-      errorType: ErrorType.InvalidCredentials,
-      message: 'Invalid credentials',
-    });
+    super(TranslationHelper.t('exceptions', 'InvalidCredentials'));
   }
 }
