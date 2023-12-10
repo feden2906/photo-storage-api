@@ -23,7 +23,7 @@
     "start:debug": "nest start --debug --watch",
     "start:dev": "NODE_ENV=development nest start --watch",
     "prestart:prod": "npm run migration:run",
-    "start:prod": "NODE_ENV=production node dist/src/main",
+    "start:prod": "node dist/src/main",
     "start:test": "NODE_ENV=test nest start --watch",
     "start:watch": "nest start --watch",
     "test": "cross-env NODE_ENV=test npm run test:e2e",
