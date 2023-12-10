@@ -109,7 +109,7 @@ export class MediaController {
   @Delete(`:${MediaId}`)
   public async deleteMedia(
     @CurrentUser() user: IUserData,
-    @Param(MediaId) mediaId: string,
+    @Param(MediaId, ParseUUIDPipe) mediaId: string,
   ): Promise<void> {
     await this.imageService.deleteMedia(user.userId, mediaId);
   }

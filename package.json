@@ -7,7 +7,7 @@
   "author": "feden2906",
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "nest build",
+    "build": "npm run generatefiles && nest build",
     "create-local-s3": "ts-node src/scripts/create-local-bucket.script.ts",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "generatefiles": "ts-node src/scripts/create-generated-files.script.ts",
@@ -19,7 +19,7 @@
     "prepare": "husky install",
     "seed:run": "ts-node ./src/database/seeds/run-seed.ts",
     "start": "npm run generatefiles && nest start",
-    "start:db": "docker compose -f docker-compose.db.yml up",
+    "start:db": "sudo docker compose -f docker-compose.db.yml up --build",
     "start:debug": "npm run generatefiles && nest start --debug --watch",
     "start:dev": "npm run generatefiles && NODE_ENV=development nest start --watch",
     "prestart:prod": "npm run migration:run",

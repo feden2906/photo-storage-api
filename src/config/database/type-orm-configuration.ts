@@ -20,6 +20,9 @@ export const typeOrmConfig: TypeOrmModuleAsyncOptions = {
     migrations: [
       path.join(__dirname, '..', '..', 'database', 'migrations', '*{.ts,.js}'),
     ],
+    cli: {
+      migrationsDir: path.join('src', 'database', 'migrations'),
+    },
   }),
   inject: [PostgresqlConfigService],
 };
